@@ -1,8 +1,9 @@
 # UZ Simulation Lab
-## Simulations using ornstein-uhlenbeck & GBM
+
+## Simulations using Ornstein-Uhlenbeck & GBM
 
 
-Our Simulation Lab leverages multivariate geometric brownian motion process to produce correlated price paths for non-stable token pairs in a liquidity pool. For stable token pairs or simulations where averages tend toward an equilibrium, like utilization rates in lending protocols, we use Ornstein-Uhlenbeck process.
+Unit Zero Simulation Lab leverages a multivariate geometric brownian motion (GBM) process to produce correlated price paths for non-stable token pairs in a liquidity pool. For stable token pairs or simulations where averages tend toward an equilibrium, like utilization rates in lending protocols, we use the Ornstein-Uhlenbeck (OU) process.
 
 ### Non-stable pairs: GBM
 

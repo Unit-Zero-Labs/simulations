@@ -11,7 +11,7 @@ import tqdm
 class OUParams:
     alpha: float  # mean reversion parameter
     gamma: float  # asymptotic mean
-    beta: float  # Brownian motion scale (standard deviation)
+    beta: float  # brownian motion scale (standard deviation)
     X_0: float = None  # initial starting value (otherwise gamma is used)
 
 def simulate_OU_process(T, runs, ou_params):

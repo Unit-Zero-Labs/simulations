@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import pandas as pd
 from datetime import datetime, timedelta
-
+import copy
 
 @dataclass
 class OUParams:
@@ -44,12 +44,61 @@ def simulate_OU_process(T, runs, ou_params):
             data[run, t] = X_t
     return data
 
+class LendingSimulation:
+    def __init__(self):
+        self.asset_price = 1.0  # starting normalized price
+        self.collateral_amount = 1000000  # Initial collateral in USD
+        self.loan_amount = 0
+        self.max_ltv = 0.8  # max LTV ratio
+        self.liquidation_threshold = 0.9  # liq occurs at 90% of max LTV
+        self.oracle_update_frequency = 60  # seconds
+
+    def update_price(self, new_price):
+        self.asset_price = new_price
+        self.check_liquidation()
+
+    def borrow(self, amount):
+        max_borrow = self.collateral_amount * self.asset_price * self.max_ltv
+        if self.loan_amount + amount <= max_borrow:
+            self.loan_amount += amount
+            return True
+        return False
+
+    def check_liquidation(self):
+        current_ltv = self.loan_amount / (self.collateral_amount * self.asset_price)
+        if current_ltv >= self.max_ltv * self.liquidation_threshold:
+            return True
+        return False
+
+def run_boundary_analysis(simulation, price_scenarios):
+    results = []
+    for scenario in price_scenarios:
+        sim = copy.deepcopy(simulation)
+        max_borrowed = 0
+        for price in scenario:
+            sim.update_price(price)
+            while sim.borrow(1000):  # sim small borrows
+                max_borrowed = sim.loan_amount
+        results.append({
+            'scenario': scenario,
+            'max_borrowed': max_borrowed,
+            'final_price': scenario[-1],
+            'liquidated': sim.check_liquidation()
+        })
+    return results
+
 ## LIQUIDITY POOL FORMULAE: GBM, CFMM 
 
 def constant_product_formula(x, y, dx):
     k = x * y
     dy = y - k / (x + dx)
     return dy
+
+def calculate_pool_metrics(self, prices, initial_x, initial_y):
+    k = initial_x * initial_y
+    y_values = [k / price for price in prices]
+    x_values = [k / y for y in y_values]
+    return x_values, y_values
 
 def calculate_price_impact(x, y, dx):
     dy = constant_product_formula(x, y, dx)
@@ -91,8 +140,11 @@ def plot_results(data, title):
     ax.legend()
     return fig
 
+############
+############
 ## APP START
-
+############
+############
 class TokenSimulationApp(tk.Tk):
     def __init__(self):
         super().__init__()
@@ -105,199 +157,302 @@ class TokenSimulationApp(tk.Tk):
         self.notebook.pack(fill=tk.BOTH, expand=True)
 
         self.lending_frame = ttk.Frame(self.notebook)
-        self.liquidity_frame = ttk.Frame(self.notebook)
+        self.stable_pool_frame = ttk.Frame(self.notebook)
+        self.non_stable_pool_frame = ttk.Frame(self.notebook)
 
-        self.notebook.add(self.lending_frame, text="Lending/Borrowing Simulation")
-        self.notebook.add(self.liquidity_frame, text="Liquidity Pool Simulation")
+        self.notebook.add(self.lending_frame, text="Lending Simulation")
+        self.notebook.add(self.stable_pool_frame, text="Stable Pair Liquidity Pool")
+        self.notebook.add(self.non_stable_pool_frame, text="Non-Stable Pair Liquidity Pool")
 
         self.create_lending_widgets()
-        self.create_liquidity_widgets()
+        self.create_stable_pool_widgets()
+        self.create_non_stable_pool_widgets()
+
 
 ## LENDING WIDGETS        
-
 
     def create_lending_widgets(self):
         input_frame = ttk.Frame(self.lending_frame)
         input_frame.pack(pady=10, padx=10, fill='x')
 
-        ttk.Label(input_frame, text="Initial Asset Price:").grid(row=0, column=0, padx=5, pady=5, sticky='e')
-        self.initial_price_entry = ttk.Entry(input_frame, width=10)
-        self.initial_price_entry.grid(row=0, column=1, padx=5, pady=5)
-        self.initial_price_entry.insert(0, "100")
+        ttk.Label(input_frame, text="Collateral Amount (USD):").grid(row=0, column=0, padx=5, pady=5, sticky='e')
+        self.collateral_entry = ttk.Entry(input_frame, width=15)
+        self.collateral_entry.grid(row=0, column=1, padx=5, pady=5)
+        self.collateral_entry.insert(0, "1000000")
 
-        ttk.Label(input_frame, text="Collateralization Ratio:").grid(row=0, column=2, padx=5, pady=5, sticky='e')
-        self.collateralization_ratio_entry = ttk.Entry(input_frame, width=10)
-        self.collateralization_ratio_entry.grid(row=0, column=3, padx=5, pady=5)
-        self.collateralization_ratio_entry.insert(0, "1.5")
+        ttk.Label(input_frame, text="Max LTV:").grid(row=1, column=0, padx=5, pady=5, sticky='e')
+        self.max_ltv_entry = ttk.Entry(input_frame, width=15)
+        self.max_ltv_entry.grid(row=1, column=1, padx=5, pady=5)
+        self.max_ltv_entry.insert(0, "0.8")
 
-        ttk.Label(input_frame, text="Interest Rate (annual):").grid(row=1, column=0, padx=5, pady=5, sticky='e')
-        self.interest_rate_entry = ttk.Entry(input_frame, width=10)
-        self.interest_rate_entry.grid(row=1, column=1, padx=5, pady=5)
-        self.interest_rate_entry.insert(0, "0.05")
+        ttk.Label(input_frame, text="Liquidation Threshold:").grid(row=2, column=0, padx=5, pady=5, sticky='e')
+        self.liquidation_threshold_entry = ttk.Entry(input_frame, width=15)
+        self.liquidation_threshold_entry.grid(row=2, column=1, padx=5, pady=5)
+        self.liquidation_threshold_entry.insert(0, "0.9")
 
-        ttk.Label(input_frame, text="Liquidation Threshold:").grid(row=1, column=2, padx=5, pady=5, sticky='e')
-        self.liquidation_threshold_entry = ttk.Entry(input_frame, width=10)
-        self.liquidation_threshold_entry.grid(row=1, column=3, padx=5, pady=5)
-        self.liquidation_threshold_entry.insert(0, "1.2")
+        ttk.Label(input_frame, text="Oracle Update Frequency (s):").grid(row=3, column=0, padx=5, pady=5, sticky='e')
+        self.oracle_frequency_entry = ttk.Entry(input_frame, width=15)
+        self.oracle_frequency_entry.grid(row=3, column=1, padx=5, pady=5)
+        self.oracle_frequency_entry.insert(0, "60")
 
-        ttk.Label(input_frame, text="Loan Duration (days):").grid(row=2, column=0, padx=5, pady=5, sticky='e')
-        self.loan_duration_entry = ttk.Entry(input_frame, width=10)
-        self.loan_duration_entry.grid(row=2, column=1, padx=5, pady=5)
-        self.loan_duration_entry.insert(0, "365")
+        ttk.Button(input_frame, text="Run Boundary Analysis", command=self.run_lending_boundary_analysis).grid(row=4, column=0, columnspan=2, pady=10)
 
-        ttk.Label(input_frame, text="Loan Amount:").grid(row=2, column=2, padx=5, pady=5, sticky='e')
-        self.loan_amount_entry = ttk.Entry(input_frame, width=10)
-        self.loan_amount_entry.grid(row=2, column=3, padx=5, pady=5)
-        self.loan_amount_entry.insert(0, "1000")
+        self.lending_result_text = tk.Text(self.lending_frame, height=20, width=60)
+        self.lending_result_text.pack(pady=10, padx=10, expand=True, fill='both')
 
-        ttk.Label(input_frame, text="Mean Reversion Rate:").grid(row=3, column=0, padx=5, pady=5, sticky='e')
-        self.alpha_entry = ttk.Entry(input_frame, width=10)
-        self.alpha_entry.grid(row=3, column=1, padx=5, pady=5)
-        self.alpha_entry.insert(0, "0.1")
+## NONSTABLE PAIR WIDGETS        
 
-        ttk.Label(input_frame, text="Long-term Mean:").grid(row=3, column=2, padx=5, pady=5, sticky='e')
-        self.gamma_entry = ttk.Entry(input_frame, width=10)
-        self.gamma_entry.grid(row=3, column=3, padx=5, pady=5)
-        self.gamma_entry.insert(0, "100")
-
-        ttk.Label(input_frame, text="Volatility:").grid(row=4, column=0, padx=5, pady=5, sticky='e')
-        self.beta_entry = ttk.Entry(input_frame, width=10)
-        self.beta_entry.grid(row=4, column=1, padx=5, pady=5)
-        self.beta_entry.insert(0, "0.2")
-
-        ttk.Button(input_frame, text="Run Lending Simulation", command=self.run_lending_simulation).grid(row=5, column=0, columnspan=4, pady=10)
-
-        self.lending_plot_frame = ttk.Frame(self.lending_frame)
-        self.lending_plot_frame.pack(expand=True, fill='both', padx=10, pady=10)
-
-        self.lending_figure, self.lending_ax = plt.subplots(figsize=(8, 5), dpi=100)
-        self.lending_canvas = FigureCanvasTkAgg(self.lending_figure, master=self.lending_plot_frame)
-        self.lending_canvas_widget = self.lending_canvas.get_tk_widget()
-        self.lending_canvas_widget.pack(expand=True, fill='both')
-
-## LIQUIDITY WIDGETS        
-
-    def create_liquidity_widgets(self):
-        input_frame = ttk.Frame(self.liquidity_frame)
+    # A, B, price of A and B, balance of the pool 
+    #
+    def create_non_stable_pool_widgets(self):
+        input_frame = ttk.Frame(self.non_stable_pool_frame)
         input_frame.pack(pady=10, padx=10, fill='x')
 
         ttk.Label(input_frame, text="Initial Price:").grid(row=0, column=0, padx=5, pady=5, sticky='e')
-        self.initial_price_entry = ttk.Entry(input_frame, width=10)
-        self.initial_price_entry.grid(row=0, column=1, padx=5, pady=5)
-        self.initial_price_entry.insert(0, "0.1")
+        self.non_stable_initial_price_entry = ttk.Entry(input_frame, width=10)
+        self.non_stable_initial_price_entry.grid(row=0, column=1, padx=5, pady=5)
+        self.non_stable_initial_price_entry.insert(0, "0.1")
 
         ttk.Label(input_frame, text="Drift (mu):").grid(row=0, column=2, padx=5, pady=5, sticky='e')
-        self.mu_entry = ttk.Entry(input_frame, width=10)
-        self.mu_entry.grid(row=0, column=3, padx=5, pady=5)
-        self.mu_entry.insert(0, "0.1")
+        self.non_stable_mu_entry = ttk.Entry(input_frame, width=10)
+        self.non_stable_mu_entry.grid(row=0, column=3, padx=5, pady=5)
+        self.non_stable_mu_entry.insert(0, "0.1")
 
         ttk.Label(input_frame, text="Volatility (sigma):").grid(row=1, column=0, padx=5, pady=5, sticky='e')
-        self.sigma_entry = ttk.Entry(input_frame, width=10)
-        self.sigma_entry.grid(row=1, column=1, padx=5, pady=5)
-        self.sigma_entry.insert(0, "0.5")
+        self.non_stable_sigma_entry = ttk.Entry(input_frame, width=10)
+        self.non_stable_sigma_entry.grid(row=1, column=1, padx=5, pady=5)
+        self.non_stable_sigma_entry.insert(0, "0.5")
 
         ttk.Label(input_frame, text="Number of Paths:").grid(row=1, column=2, padx=5, pady=5, sticky='e')
-        self.paths_entry = ttk.Entry(input_frame, width=10)
-        self.paths_entry.grid(row=1, column=3, padx=5, pady=5)
-        self.paths_entry.insert(0, "1000")
+        self.non_stable_paths_entry = ttk.Entry(input_frame, width=10)
+        self.non_stable_paths_entry.grid(row=1, column=3, padx=5, pady=5)
+        self.non_stable_paths_entry.insert(0, "1000")
 
-        ttk.Button(input_frame, text="Run Liquidity Simulation", command=self.run_liquidity_simulation).grid(row=4, column=0, columnspan=4, pady=10)
+        ttk.Button(input_frame, text="Run Non-Stable Pool Simulation", command=self.run_non_stable_pool_simulation).grid(row=4, column=0, columnspan=4, pady=10)
 
-        self.liquidity_plot_frame = ttk.Frame(self.liquidity_frame)
-        self.liquidity_plot_frame.pack(expand=True, fill='both', padx=10, pady=10)
+        self.non_stable_plot_frame = ttk.Frame(self.non_stable_pool_frame)
+        self.non_stable_plot_frame.pack(expand=True, fill='both', padx=10, pady=10)
 
-        self.liquidity_figure, self.liquidity_ax = plt.subplots(figsize=(8, 5), dpi=100)
-        self.liquidity_canvas = FigureCanvasTkAgg(self.liquidity_figure, master=self.liquidity_plot_frame)
-        self.liquidity_canvas_widget = self.liquidity_canvas.get_tk_widget()
-        self.liquidity_canvas_widget.pack(expand=True, fill='both')
+        self.non_stable_figure, self.non_stable_ax = plt.subplots(figsize=(8, 5), dpi=100)
+        self.non_stable_canvas = FigureCanvasTkAgg(self.non_stable_figure, master=self.non_stable_plot_frame)
+        self.non_stable_canvas_widget = self.non_stable_canvas.get_tk_widget()
+        self.non_stable_canvas_widget.pack(expand=True, fill='both')
 
-## LENDING SIM
+## STABLE PAIR WIDGETS
 
-    def run_lending_simulation(self):
+    def create_stable_pool_widgets(self):
+        input_frame = ttk.Frame(self.stable_pool_frame)
+        input_frame.pack(pady=10, padx=10, fill='x')
+
+        ttk.Label(input_frame, text="Initial Price:").grid(row=0, column=0, padx=5, pady=5, sticky='e')
+        self.stable_initial_price_entry = ttk.Entry(input_frame, width=10)
+        self.stable_initial_price_entry.grid(row=0, column=1, padx=5, pady=5)
+        self.stable_initial_price_entry.insert(0, "1.0")
+
+        ttk.Label(input_frame, text="Mean Reversion Rate:").grid(row=0, column=2, padx=5, pady=5, sticky='e')
+        self.stable_alpha_entry = ttk.Entry(input_frame, width=10)
+        self.stable_alpha_entry.grid(row=0, column=3, padx=5, pady=5)
+        self.stable_alpha_entry.insert(0, "0.1")
+
+        ttk.Label(input_frame, text="Long-term Mean:").grid(row=1, column=0, padx=5, pady=5, sticky='e')
+        self.stable_gamma_entry = ttk.Entry(input_frame, width=10)
+        self.stable_gamma_entry.grid(row=1, column=1, padx=5, pady=5)
+        self.stable_gamma_entry.insert(0, "1.0")
+
+        ttk.Label(input_frame, text="Volatility:").grid(row=1, column=2, padx=5, pady=5, sticky='e')
+        self.stable_beta_entry = ttk.Entry(input_frame, width=10)
+        self.stable_beta_entry.grid(row=1, column=3, padx=5, pady=5)
+        self.stable_beta_entry.insert(0, "0.01")
+
+        ttk.Label(input_frame, text="Simulation Days:").grid(row=2, column=0, padx=5, pady=5, sticky='e')
+        self.stable_days_entry = ttk.Entry(input_frame, width=10)
+        self.stable_days_entry.grid(row=2, column=1, padx=5, pady=5)
+        self.stable_days_entry.insert(0, "365")
+
+        ttk.Button(input_frame, text="Run Stable Pool Simulation", command=self.run_stable_pool_simulation).grid(row=3, column=0, columnspan=4, pady=10)
+
+        self.stable_plot_frame = ttk.Frame(self.stable_pool_frame)
+        self.stable_plot_frame.pack(expand=True, fill='both', padx=10, pady=10)
+
+        self.stable_figure, self.stable_ax = plt.subplots(figsize=(8, 5), dpi=100)
+        self.stable_canvas = FigureCanvasTkAgg(self.stable_figure, master=self.stable_plot_frame)
+        self.stable_canvas_widget = self.stable_canvas.get_tk_widget()
+        self.stable_canvas_widget.pack(expand=True, fill='both')
+
+
+
+## LENDING SIM - BOUNDARY ANALYSIS
+
+    def run_lending_boundary_analysis(self):
         try:
-            initial_price = float(self.initial_price_entry.get())
-            collateralization_ratio = float(self.collateralization_ratio_entry.get())
-            interest_rate = float(self.interest_rate_entry.get())
-            liquidation_threshold = float(self.liquidation_threshold_entry.get())
-            loan_duration = int(self.loan_duration_entry.get())
-            loan_amount = float(self.loan_amount_entry.get())
-            alpha = float(self.alpha_entry.get())
-            gamma = float(self.gamma_entry.get())
-            beta = float(self.beta_entry.get())
+            simulation = LendingSimulation()
+            simulation.collateral_amount = float(self.collateral_entry.get())
+            simulation.max_ltv = float(self.max_ltv_entry.get())
+            simulation.liquidation_threshold = float(self.liquidation_threshold_entry.get())
+            simulation.oracle_update_frequency = float(self.oracle_frequency_entry.get())
 
-            ou_params = OUParams(alpha=alpha, gamma=gamma, beta=beta, X_0=initial_price)
-            lending_params = LendingBorrowingParams(
-                collateralization_ratio=collateralization_ratio,
-                interest_rate=interest_rate,
-                liquidation_threshold=liquidation_threshold,
-                utilization_rate=loan_amount / (initial_price * collateralization_ratio)
-            )
+            # boundary parameters
+            normal_scenario = [1.0] * 10  # stable price
+            spike_scenario = [1.0] * 5 + [10.0] + [1.0] * 4  #  price spike
+            crash_scenario = [1.0] * 5 + [0.1] + [1.0] * 4  # price crash
+            gradual_increase = [1.0 + 0.1*i for i in range(10)]  # grad increasing price
+            gradual_decrease = [1.0 - 0.05*i for i in range(10)]  # grad decreasing price
 
-            asset_prices = simulate_OU_process(loan_duration, 1, ou_params)[0]
-            
-            collateral_value = asset_prices * (loan_amount / initial_price) * collateralization_ratio
-            loan_value = loan_amount * (1 + interest_rate) ** (np.arange(loan_duration) / 365)
-            
-            health_factor = collateral_value / loan_value
-            liquidation_events = health_factor < liquidation_threshold
+            scenarios = [normal_scenario, spike_scenario, crash_scenario, gradual_increase, gradual_decrease]
+            results = run_boundary_analysis(simulation, scenarios)
 
-            start_date = datetime.now()
-            date_range = [start_date + timedelta(days=i) for i in range(loan_duration)]
+            self.lending_result_text.delete('1.0', tk.END)
+            for result in results:
+                self.lending_result_text.insert(tk.END, f"Scenario: {result['scenario']}\n")
+                self.lending_result_text.insert(tk.END, f"Max Borrowed: ${result['max_borrowed']:,.2f}\n")
+                self.lending_result_text.insert(tk.END, f"Final Price: ${result['final_price']:.2f}\n")
+                self.lending_result_text.insert(tk.END, f"Liquidated: {result['liquidated']}\n\n")
 
-            self.lending_ax.clear()
-            self.lending_ax.plot(date_range, asset_prices, label='Asset Price')
-            self.lending_ax.plot(date_range, collateral_value, label='Collateral Value')
-            self.lending_ax.plot(date_range, loan_value, label='Loan Value')
-            self.lending_ax.plot(date_range, health_factor, label='Health Factor')
-            self.lending_ax.axhline(y=liquidation_threshold, color='r', linestyle='--', label='Liquidation Threshold')
-            
-            for i, liquidation in enumerate(liquidation_events):
-                if liquidation:
-                    self.lending_ax.axvline(x=date_range[i], color='r', alpha=0.3)
-
-            self.lending_ax.set_title('Lending Simulation Results', fontsize=10)
-            self.lending_ax.set_xlabel('Date', fontsize=8)
-            self.lending_ax.set_ylabel('Value', fontsize=8)
-            self.lending_ax.legend(fontsize=8)
-            self.lending_ax.tick_params(axis='both', which='major', labelsize=8)
-            self.lending_figure.tight_layout()
-            self.lending_canvas.draw()
+            self.display_chart_in_new_window(results)
 
         except Exception as e:
             messagebox.showerror("Error", str(e))
 
-## LIQUIDITY SIM
+    def display_chart_in_new_window(self, results):
+        chart_window = tk.Toplevel(self)
+        chart_window.title("Boundary Analysis Charts")
+        chart_window.geometry("600x400")
 
-    def run_liquidity_simulation(self):
+        fig = self.create_boundary_analysis_chart(results)
+        canvas = FigureCanvasTkAgg(fig, master=chart_window)
+        canvas.draw()
+        canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+
+   
+        close_button = ttk.Button(chart_window, text="Close", command=chart_window.destroy)
+        close_button.pack(pady=5)
+
+    def create_boundary_analysis_chart(self, results):
+        plt.rcParams.update({'font.size': 8})  
+        fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(8, 10), dpi=100)
+        colors = plt.cm.rainbow(np.linspace(0, 1, len(results)))
+        
+        for result, color in zip(results, colors):
+            scenario = result['scenario']
+            max_borrowed = result['max_borrowed']
+            time = range(len(scenario))
+            
+            # prices
+            ax1.plot(time, scenario, label=f"Scenario {results.index(result)+1}", color=color)
+            ax1.set_ylabel('Asset Price', fontsize=8)
+            ax1.set_title('Asset Price Scenarios', fontsize=8)
+            
+            # borrowed amount 
+            ax2.plot(time, [max_borrowed] * len(time), color=color)
+            
+        ax1.legend(fontsize=8)
+        ax1.grid(True)
+        ax1.tick_params(axis='both', which='major', labelsize=8)
+        
+        ax2.set_xlabel('Time', fontsize=8)
+        ax2.set_ylabel('Max Borrowed Amount', fontsize=8)
+        ax2.set_title('Maximum Borrowed Amount per Scenario', fontsize=8)
+        ax2.grid(True)
+        ax2.tick_params(axis='both', which='major', labelsize=8)
+        
+        #  liquidation threshold line
+        max_y = max(result['max_borrowed'] for result in results)
+        liquidation_line = max_y * float(self.liquidation_threshold_entry.get())
+        ax2.axhline(y=liquidation_line, color='r', linestyle='--', label='Liquidation Threshold')
+        ax2.legend(fontsize=7)
+
+        plt.tight_layout()
+        return fig
+    
+
+## STABLE SIM
+
+    def run_stable_pool_simulation(self):
         try:
-            S0 = float(self.initial_price_entry.get())
-            mu = float(self.mu_entry.get())
-            sigma = float(self.sigma_entry.get())
-            paths = int(self.paths_entry.get())
+            initial_price = float(self.stable_initial_price_entry.get())
+            alpha = float(self.stable_alpha_entry.get())
+            gamma = float(self.stable_gamma_entry.get())
+            beta = float(self.stable_beta_entry.get())
+            days = int(self.stable_days_entry.get())
+
+            ou_params = OUParams(alpha=alpha, gamma=gamma, beta=beta, X_0=initial_price)
+            prices = simulate_OU_process(days, 1, ou_params)[0]
+
+            start_date = datetime.now()
+            date_range = [start_date + timedelta(days=i) for i in range(days)]
+
+            self.stable_ax.clear()
+            self.stable_ax.plot(date_range, prices, label='Token Price')
+            self.stable_ax.axhline(y=gamma, color='r', linestyle='--', label='Long-term Mean')
+            
+            self.stable_ax.set_title('Stable Pair Liquidity Pool Simulation', fontsize=10)
+            self.stable_ax.set_xlabel('Date', fontsize=8)
+            self.stable_ax.set_ylabel('Price', fontsize=8)
+            self.stable_ax.legend(fontsize=8)
+            self.stable_ax.tick_params(axis='both', which='major', labelsize=8)
+            self.stable_figure.tight_layout()
+            self.stable_canvas.draw()
+
+        except Exception as e:
+            messagebox.showerror("Error", str(e))
+
+## NON STABLE LP SIM
+
+    def run_non_stable_pool_simulation(self):
+        try:
+            S0 = float(self.non_stable_initial_price_entry.get())
+            mu = float(self.non_stable_mu_entry.get())
+            sigma = float(self.non_stable_sigma_entry.get())
+            paths = int(self.non_stable_paths_entry.get())
             T = 1
             N = 365
 
             prices = geometric_brownian_motion(S0, mu, sigma, T, N, paths)
-            start_date = datetime(2023, 1, 1)
+            start_date = datetime(2024, 1, 1)
             date_range = [start_date + timedelta(days=i) for i in range(N)]
             df = pd.DataFrame(prices.T, index=date_range, columns=[f'Path_{i}' for i in range(paths)])
             df['Median'] = df.median(axis=1)
 
-            self.liquidity_ax.clear()
-            self.liquidity_ax.plot(df.index, df.iloc[:, :-1], color='cyan', alpha=0.1)
-            self.liquidity_ax.plot(df.index, df['Median'], color='magenta', linewidth=2)
-            self.liquidity_ax.set_title('GBM Simulated prices (USD)', fontsize=10)
-            self.liquidity_ax.set_xlabel('Date', fontsize=8)
-            self.liquidity_ax.set_ylabel('USD ($)', fontsize=8)
-            self.liquidity_ax.set_ylim(0, max(df.max().max(), 0.4))
-            self.liquidity_ax.fill_between(df.index, df.min(axis=1), df.max(axis=1), color='cyan', alpha=0.3)
-            self.liquidity_ax.legend(['Token-USD'], fontsize=8)
-            self.liquidity_ax.tick_params(axis='both', which='major', labelsize=8)
-            self.liquidity_figure.tight_layout()
-            self.liquidity_canvas.draw()
+            # calc liquidity pool metrics
+            initial_x = 1000000  # example initial liquidity
+            initial_y = initial_x * S0
+            x_values, y_values = self.calculate_pool_metrics(df['Median'], initial_x, initial_y)
+
+            self.non_stable_ax.clear()
+            self.non_stable_ax.plot(df.index, df.iloc[:, :-1], color='cyan', alpha=0.1)
+            self.non_stable_ax.plot(df.index, df['Median'], color='magenta', linewidth=2, label='Token Price (Median)')
+            self.non_stable_ax.plot(date_range, x_values, label='Token X')
+            self.non_stable_ax.plot(date_range, y_values, label='Token Y')
+
+            # calc and plot price impact for a sample trade
+            sample_dx = initial_x * 0.01  # 1% of initial liquidity
+            price_impacts = [self.calculate_price_impact(x, y, sample_dx) for x, y in zip(x_values, y_values)]
+            self.non_stable_ax.plot(date_range, price_impacts, label='Price Impact (1% trade)')
+
+            self.non_stable_ax.set_title('Non-Stable Pair Liquidity Pool Simulation', fontsize=10)
+            self.non_stable_ax.set_xlabel('Date', fontsize=8)
+            self.non_stable_ax.set_ylabel('Value', fontsize=8)
+            self.non_stable_ax.set_ylim(0, max(df.max().max(), 0.4))
+            self.non_stable_ax.fill_between(df.index, df.min(axis=1), df.max(axis=1), color='cyan', alpha=0.3)
+            self.non_stable_ax.legend(fontsize=8)
+            self.non_stable_ax.tick_params(axis='both', which='major', labelsize=8)
+            self.non_stable_figure.tight_layout()
+            self.non_stable_canvas.draw()
             
         except Exception as e:
             messagebox.showerror("Error", str(e))
+
+    def calculate_pool_metrics(self, prices, initial_x, initial_y):
+        k = initial_x * initial_y
+        y_values = [k / price for price in prices]
+        x_values = [k / y for y in y_values]
+        return x_values, y_values
+
+    def calculate_price_impact(self, x, y, dx):
+        dy = constant_product_formula(x, y, dx)
+        initial_price = y / x
+        final_price = (y - dy) / (x + dx)
+        return (final_price - initial_price) / initial_price
 
 if __name__ == "__main__":
     app = TokenSimulationApp()

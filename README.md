@@ -22,6 +22,17 @@ $$
 S_t = S_0 \exp\left(\left(\mu - \frac{\sigma^2}{2}\right)t + \sigma W_t\right)
 $$
 
+GBM is widely used in financial modeling because it captures key features of asset prices:
+1. Prices are always positive
+2. Price changes are percentage changes, which aligns with how financial returns are typically measured
+3. Price changes are independent, reflecting the efficient market hypothesis
+
+In our sims, we use the following discrete-time approximation:
+
+```python
+S_t = S_0 * exp((mu - 0.5 * sigma**2) * t + sigma * sqrt(t) * np.random.normal(0, 1))
+```
+
 ### Stable pairs, lending: OU
 
 $$
@@ -35,7 +46,7 @@ Initial parameters of the OU process:
 - Long-term mean γ,
 - Volatility β.
 
-At each timestep \(t\), update the rate \(X_t\) using the formula:
+At each timestep \(t\), the sim updates the rate \(X_t\) using the formula:
 
 ```{r, eval=FALSE}
 X_t <- X_t_previous + alpha * (gamma - X_t_previous) * dt + beta * sqrt(dt) * rnorm(1)

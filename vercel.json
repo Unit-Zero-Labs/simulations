@@ -2,20 +2,14 @@
     "version": 2,
     "builds": [
       {
-        "src": "vercel-build.sh",
-        "use": "@vercel/static-build",
-        "config": {
-          "distDir": "."
-        }
-      },
-      {
-        "src": "run.py",
-        "use": "@vercel/python",
-        "config": { "runtime": "python3.9" }
+        "src": "api/index.py",
+        "use": "@vercel/python"
       }
     ],
     "routes": [
-      { "src": "/static/(.*)", "dest": "/static/$1" },
-      { "src": "/(.*)", "dest": "/run.py" }
+      {
+        "src": "/(.*)",
+        "dest": "api/index.py"
+      }
     ]
   }

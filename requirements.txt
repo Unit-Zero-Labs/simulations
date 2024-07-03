@@ -1,7 +1,0 @@
-Flask-SQLAlchemy
-celery
-redis
-numpy
-pandas
-scipy
-statsmodels

@@ -15,19 +15,19 @@ class OUParams:
         self.X_0 = X_0
 
 class LendingSimulation:
-    def __init__(self):
-        self.asset_price = 1.0
-        self.collateral_amount = 1000000
+    def __init__(self, collateral_amount, max_ltv, liquidation_threshold, total_deposits, interest_rate, liquidation_penalty):
+        self.asset_price = 1.0  
+        self.collateral_amount = collateral_amount
         self.loan_amount = 0
-        self.max_ltv = 0.8
-        self.liquidation_threshold = 0.9
-        self.oracle_update_frequency = 60
-        self.total_deposits = 10000000  # New: total deposits in the protocol
-        self.interest_rate = 0.05  # New: annual interest rate
-        self.liquidation_penalty = 0.1  # New: liquidation penalty
+        self.max_ltv = max_ltv
+        self.liquidation_threshold = liquidation_threshold
+        self.oracle_update_frequency = 60  
+        self.total_deposits = total_deposits
+        self.interest_rate = interest_rate
+        self.liquidation_penalty = liquidation_penalty
 
     def update_price(self, new_price):
-        self.asset_price = max(new_price, 0.000001)  # Ensure price is never zero
+        self.asset_price = max(new_price, 0.000001) 
         return self.check_liquidation()
 
     def borrow(self, amount):
@@ -144,14 +144,14 @@ def index():
 @app.route('/run_lending_simulation', methods=['POST'])
 def run_lending_simulation():
     data = request.json
-    simulation = LendingSimulation()
-    simulation.collateral_amount = float(data['collateral_amount'])
-    simulation.max_ltv = float(data['max_ltv'])
-    simulation.liquidation_threshold = float(data['liquidation_threshold'])
-    simulation.total_deposits = float(data['total_deposits'])
-    simulation.interest_rate = float(data['interest_rate'])
-    simulation.liquidation_penalty = float(data['liquidation_penalty'])
-
+    simulation = LendingSimulation(
+        collateral_amount=float(data['collateral_amount']),
+        max_ltv=float(data['max_ltv']),
+        liquidation_threshold=float(data['liquidation_threshold']),
+        total_deposits=float(data['total_deposits']),
+        interest_rate=float(data['interest_rate']),
+        liquidation_penalty=float(data['liquidation_penalty'])
+    )
     price_scenarios = [
         [1.0] * 365,  # stable price
         [1.0 + 0.001*i for i in range(365)],  # gradual increase
@@ -185,7 +185,8 @@ def run_stable_pool_simulation():
 
     return jsonify({
         'prices': prices.tolist(),
-        'days': list(range(days))
+        'days': list(range(days)),
+        'gamma': gamma 
     })
 
 @app.route('/run_non_stable_pool_simulation', methods=['POST'])

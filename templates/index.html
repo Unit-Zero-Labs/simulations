@@ -346,12 +346,24 @@
             })
             .then(response => response.json())
             .then(data => {
-                const trace = {
-                    x: data.days,
-                    y: data.prices,
-                    mode: 'lines',
-                    name: 'Token Price'
-                };
+                const traces = [
+                    {
+                        x: data.days,
+                        y: data.prices,
+                        mode: 'lines',
+                        name: 'Token Price'
+                    },
+                    {
+                        x: [Math.min(...data.days), Math.max(...data.days)],
+                        y: [data.gamma, data.gamma],
+                        mode: 'lines',
+                        name: 'Long-term Mean',
+                        line: {
+                            dash: 'dash',
+                            color: 'red'
+                        }
+                    }
+                ];
 
                 const layout = {
                     ...plotlyLayout,
@@ -360,7 +372,7 @@
                     yaxis: { title: 'Price' }
                 };
 
-                Plotly.newPlot('stable-chart', [trace], layout);
+                Plotly.newPlot('stable-chart', traces, layout);
             });
         }
 

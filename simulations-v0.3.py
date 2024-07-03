@@ -9,37 +9,18 @@ import pandas as pd
 from datetime import datetime, timedelta
 import copy
 
-@dataclass
-class OUParams:
-    alpha: float
-    gamma: float
-    beta: float
-    X_0: float = None
-
-@dataclass
-class LendingBorrowingParams:
-    collateralization_ratio: float
-    interest_rate: float
-    liquidation_threshold: float
-    utilization_rate: float
-
-@dataclass
-class LiquidityPoolParams:
-    initial_x: float  # Initial amount of token X
-    initial_y: float  # Initial amount of token Y
-    fee_percent: float  # Fee percentage for swaps
 
 ## LENDING FORMULAE: OU
 
-def simulate_OU_process(T, runs, ou_params):
+def simulate_OU_process(T, runs, alpha, gamma, beta, X_0=None):
     dt = 1.0
     data = np.zeros((runs, T))
     for run in range(runs):
-        X_t = ou_params.X_0 if ou_params.X_0 is not None else ou_params.gamma
+        X_t = X_0 if X_0 is not None else gamma
         data[run, 0] = X_t
         for t in range(1, T):
             dW = np.random.normal(0, np.sqrt(dt))
-            dX = ou_params.alpha * (ou_params.gamma - X_t) * dt + ou_params.beta * dW
+            dX = alpha * (gamma - X_t) * dt + beta * dW
             X_t += dX
             data[run, t] = X_t
     return data
@@ -365,7 +346,7 @@ class TokenSimulationApp(tk.Tk):
         return fig
     
 
-## STABLE SIM
+    ## STABLE LP SIM
 
     def run_stable_pool_simulation(self):
         try:
@@ -375,8 +356,8 @@ class TokenSimulationApp(tk.Tk):
             beta = float(self.stable_beta_entry.get())
             days = int(self.stable_days_entry.get())
 
-            ou_params = OUParams(alpha=alpha, gamma=gamma, beta=beta, X_0=initial_price)
-            prices = simulate_OU_process(days, 1, ou_params)[0]
+            prices = simulate_OU_process(days, 1, alpha, gamma, beta, initial_price)[0]
+            
 
             start_date = datetime.now()
             date_range = [start_date + timedelta(days=i) for i in range(days)]
@@ -396,7 +377,7 @@ class TokenSimulationApp(tk.Tk):
         except Exception as e:
             messagebox.showerror("Error", str(e))
 
-## NON STABLE LP SIM
+    ## NONSTABLE LP SIM
 
     def run_non_stable_pool_simulation(self):
         try:

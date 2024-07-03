@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit Zero Simulation Lab</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        :root {
+            --background: #1A1A2E;
+            --foreground: #E0E0E0;
+            --highlight: #A56EF7;
+            --accent: #7F5AF0;
+            --error: #FF6B6B;
+            --success: #59B259;
+            --input-bg: #16213E;
+            --base-font-size: 18px;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--foreground);
+            background-color: var(--background);
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .logo {
+            width: 200px;
+            height: auto;
+            margin-right: 20px;
+        }
+        h1 {
+            margin: 10;
+            text-align: center;
+            color: var(--highlight);
+        }
+        .tab-button {
+            background-color: var(--accent);
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 10px 20px;
+            transition: 0.3s;
+            font-size: 17px;
+            color: var(--background);
+            border-radius: 5px 5px 0 0;
+        }
+        .tab-button:hover {
+            background-color: var(--highlight);
+        }
+        .tab-button.active {
+            background-color: var(--highlight);
+        }
+        .tab-content {
+            display: none;
+            padding: 20px;
+            background-color: #16213E;
+            border-radius: 0 5px 5px 5px;
+        }
+        .input-container {
+        position: relative;
+        margin-bottom: 20px;
+        }
+
+        .input-container label {
+            position: absolute;
+            top: 0;
+            left: 10px;
+            font-size: 14px;
+            color: var(--accent);
+            transition: all 0.3s ease;
+            pointer-events: none;
+            padding: 0 5px;
+            background-color: var(--input-bg);
+        }
+
+        .input-container input[type="number"] {
+            width: 100%;
+            padding: 15px 10px 5px;
+            font-size: 16px;
+            background-color: var(--input-bg);
+            border: 1px solid var(--accent);
+            border-radius: 5px;
+            color: var(--foreground);
+        }
+
+        .input-container input[type="number"]:focus + label,
+        .input-container input[type="number"]:not(:placeholder-shown) + label {
+            top: -10px;
+            font-size: 12px;
+            color: var(--highlight);
+        }
+
+        button {
+            background-color: var(--accent);
+            color: var(--background);
+            padding: 10px 20px;
+            margin: 8px 0;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            border-radius: 4px;
+            transition: 0.3s;
+        }
+        button:hover {
+            background-color: var(--highlight);
+        }
+    </style>
+</head>
+
+
+<body>
+    <div class="header">
+        <img src="{{ url_for('static', filename='uzl1.png') }}" alt="Logo" class="logo">
+        <h1>Simulation Lab</h1>
+    </div>
+    
+    <div id="tabs">
+
+
+        <button class="tab-button active" onclick="openTab(event, 'lending')">Lending Simulation</button>
+        <button class="tab-button" onclick="openTab(event, 'stable')">Stable Pool Simulation</button>
+        <button class="tab-button" onclick="openTab(event, 'non-stable')">Non-Stable Pool Simulation</button>
+    </div>
+
+    <div id="lending" class="tab-content" style="display:block;">
+        <h2>Lending Simulation</h2>
+        <div class="input-container">
+            <input type="number" id="collateral-amount" placeholder=" ">
+            <label for="collateral-amount">Collateral Amount</label>
+        </div>
+        <div class="input-container">
+            <input type="number" id="max-ltv" placeholder=" ">
+            <label for="max-ltv">Max LTV</label>
+        </div>
+        <div class="input-container">
+            <input type="number" id="liquidation-threshold" placeholder=" ">
+            <label for="liquidation-threshold">Liquidation Threshold</label>
+        </div>
+        <button onclick="runLendingSimulation()">Run Simulation</button>
+        <div id="lending-chart"></div>
+    </div>
+
+    <div id="stable" class="tab-content">
+        <h2>Stable Pool Simulation</h2>
+        <div class="input-container">
+            <input type="number" id="stable-initial-price" placeholder=" ">
+            <label for="stable-initial-price">Initial Price</label>
+        </div>
+        <div class="input-container">
+            <input type="number" id="stable-alpha" placeholder=" ">
+            <label for="stable-alpha">Mean Reversion Rate</label>
+        </div>
+        <div class="input-container">
+            <input type="number" id="stable-gamma" placeholder=" ">
+            <label for="stable-gamma">Long-term Mean</label>
+        </div>
+        <div class="input-container">
+            <input type="number" id="stable-beta" placeholder=" ">
+            <label for="stable-beta">Volatility</label>
+        </div>
+        <div class="input-container">
+            <input type="number" id="stable-days" placeholder=" ">
+            <label for="stable-days">Simulation Days</label>
+        </div>
+        <button onclick="runStablePoolSimulation()">Run Simulation</button>
+        <div id="stable-chart"></div>
+    </div>
+    
+    <div id="non-stable" class="tab-content">
+        <h2>Non-Stable Pool Simulation</h2>
+        <div class="input-container">
+            <input type="number" id="non-stable-initial-price" placeholder=" ">
+            <label for="non-stable-initial-price">Initial Price</label>
+        </div>
+        <div class="input-container">
+            <input type="number" id="non-stable-mu" placeholder=" ">
+            <label for="non-stable-mu">Drift</label>
+        </div>
+        <div class="input-container">
+            <input type="number" id="non-stable-sigma" placeholder=" ">
+            <label for="non-stable-sigma">Volatility</label>
+        </div>
+        <div class="input-container">
+            <input type="number" id="non-stable-paths" placeholder=" ">
+            <label for="non-stable-paths">Number of Paths</label>
+        </div>
+        <button onclick="runNonStablePoolSimulation()">Run Simulation</button>
+        <div id="non-stable-chart"></div>
+    </div>
+
+    <script>
+        const plotlyLayout = {
+            paper_bgcolor: '#1A1A2E',
+            plot_bgcolor: '#1A1A2E',
+            font: {
+                color: '#E0E0E0',
+                size: 14
+            },
+            title: {
+                font: {
+                    size: 24
+                }
+            },
+            xaxis: {
+                gridcolor: '#16213E',
+                zerolinecolor: '#7F5AF0',
+                title: {
+                    font: {
+                        size: 18
+                    }
+                },
+                tickfont: {
+                    size: 14
+                }
+            },
+            yaxis: {
+                gridcolor: '#16213E',
+                zerolinecolor: '#7F5AF0',
+                title: {
+                    font: {
+                        size: 18
+                    }
+                },
+                tickfont: {
+                    size: 14
+                }
+            },
+            height: 600,
+            width: 1000
+        };
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tab-button");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+
+        function runLendingSimulation() {
+            const data = {
+                collateral_amount: parseFloat(document.getElementById('collateral-amount').value),
+                max_ltv: parseFloat(document.getElementById('max-ltv').value),
+                liquidation_threshold: parseFloat(document.getElementById('liquidation-threshold').value)
+            };
+
+            fetch('/run_lending_simulation', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+            .then(response => response.json())
+            .then(data => {
+                const traces = data.map((result, index) => ({
+                    x: Array.from(Array(result.scenario.length).keys()),
+                    y: result.scenario,
+                    mode: 'lines',
+                    name: `Scenario ${index + 1}`
+                }));
+
+                traces.push({
+                    x: Array.from(Array(data[0].scenario.length).keys()),
+                    y: data[0].ltv_ratios,
+                    mode: 'lines',
+                    name: 'LTV Ratio',
+                    yaxis: 'y2'
+                });
+
+                const layout = {
+                    ...plotlyLayout,
+                    title: 'Lending Simulation Results',
+                    xaxis: { title: 'Time' },
+                    yaxis: { title: 'Asset Price' },
+                    yaxis2: {
+                        title: 'LTV Ratio',
+                        overlaying: 'y',
+                        side: 'right'
+                    },
+                    showlegend: true
+                };
+
+                Plotly.newPlot('lending-chart', traces, layout);
+            });
+        }
+
+        function runStablePoolSimulation() {
+            const data = {
+                initial_price: parseFloat(document.getElementById('stable-initial-price').value),
+                alpha: parseFloat(document.getElementById('stable-alpha').value),
+                gamma: parseFloat(document.getElementById('stable-gamma').value),
+                beta: parseFloat(document.getElementById('stable-beta').value),
+                days: parseInt(document.getElementById('stable-days').value)
+            };
+
+            fetch('/run_stable_pool_simulation', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+            .then(response => response.json())
+            .then(data => {
+                const trace = {
+                    x: data.days,
+                    y: data.prices,
+                    mode: 'lines',
+                    name: 'Token Price'
+                };
+
+                const layout = {
+                    ...plotlyLayout,
+                    title: 'Stable Pool Simulation Results',
+                    xaxis: { title: 'Days' },
+                    yaxis: { title: 'Price' }
+                };
+
+                Plotly.newPlot('stable-chart', [trace], layout);
+            });
+        }
+
+        function runNonStablePoolSimulation() {
+            const data = {
+                initial_price: parseFloat(document.getElementById('non-stable-initial-price').value),
+                mu: parseFloat(document.getElementById('non-stable-mu').value),
+                sigma: parseFloat(document.getElementById('non-stable-sigma').value),
+                paths: parseInt(document.getElementById('non-stable-paths').value)
+            };
+
+            fetch('/run_non_stable_pool_simulation', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+            .then(response => response.json())
+            .then(data => {
+                const traces = [
+                    {
+                        x: data.days,
+                        y: data.median_prices,
+                        mode: 'lines',
+                        name: 'Median Price'
+                    },
+                    {
+                        x: data.days,
+                        y: data.min_prices,
+                        mode: 'lines',
+                        name: 'Min Price',
+                        line: {dash: 'dot'}
+                    },
+                    {
+                        x: data.days,
+                        y: data.max_prices,
+                        mode: 'lines',
+                        name: 'Max Price',
+                        line: {dash: 'dot'}
+                    }
+                ];
+
+                const layout = {
+                    ...plotlyLayout,
+                    title: 'Non-Stable Pool Simulation Results',
+                    xaxis: { title: 'Days' },
+                    yaxis: { title: 'Price' }
+                };
+
+                Plotly.newPlot('non-stable-chart', traces, layout);
+            });
+        }
+    </script>
+</body>
+</html>

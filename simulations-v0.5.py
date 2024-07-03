@@ -393,38 +393,53 @@ class TokenSimulationApp(tk.Tk):
             N = 365
 
             prices = geometric_brownian_motion(S0, mu, sigma, T, N, paths)
-            start_date = datetime(2024, 1, 1)
+            start_date = datetime(2023, 1, 1)  
             date_range = [start_date + timedelta(days=i) for i in range(N)]
             df = pd.DataFrame(prices.T, index=date_range, columns=[f'Path_{i}' for i in range(paths)])
-            df['Median'] = df.median(axis=1)
-
-            # calc liquidity pool metrics
-            initial_x = 1000000  # example initial liquidity
-            initial_y = initial_x * S0
-            x_values, y_values = self.calculate_pool_metrics(df['Median'], initial_x, initial_y)
 
             self.non_stable_ax.clear()
-            self.non_stable_ax.plot(df.index, df.iloc[:, :-1], color='cyan', alpha=0.1)
-            self.non_stable_ax.plot(df.index, df['Median'], color='magenta', linewidth=2, label='Token Price (Median)')
+            self.non_stable_figure.patch.set_facecolor('#1A1A2E')  
+            self.non_stable_ax.set_facecolor('#1A1A2E')
 
-            # calc and plot price impact for a sample trade
-            sample_dx = initial_x * 0.01  # 1% of initial liquidity
-            price_impacts = [self.calculate_price_impact(x, y, sample_dx) for x, y in zip(x_values, y_values)]
-            self.non_stable_ax.plot(date_range, price_impacts, label='Price Impact (1% trade)')
+            for i in range(paths):
+                self.non_stable_ax.plot(date_range, df[f'Path_{i}'], color='cyan', alpha=0.01, linewidth=0.5)
 
-            self.non_stable_ax.set_title('Non-Stable Pair Liquidity Pool Simulation', fontsize=10)
-            self.non_stable_ax.set_ylabel('USD ($)', fontsize=8)
-            self.non_stable_ax.set_ylim(0, max(df.max().max(), 0.4))
-            self.non_stable_ax.set_ylim(0.05, 0.3)
-            self.non_stable_ax.fill_between(df.index, df.min(axis=1), df.max(axis=1), color='cyan', alpha=0.3)
-            self.non_stable_ax.legend(fontsize=8)
-            self.non_stable_ax.tick_params(axis='both', which='major', labelsize=8)
+            percentiles = [5, 25, 50, 75, 95]
+            percentile_df = df.quantile(q=[p/100 for p in percentiles], axis=1).T
+
+            colors = ['#87CEFA', '#4169E1', '#FFFFFF', '#FF69B4', '#FF1493']
+            labels = ['5th-25th percentile', '25th-50th percentile', '50th-75th percentile', '75th-95th percentile']
+
+            for i in range(len(percentiles) - 1):
+                self.non_stable_ax.fill_between(date_range, 
+                                            percentile_df[percentiles[i]/100], 
+                                            percentile_df[percentiles[i+1]/100], 
+                                            color=colors[i], alpha=0.3, label=labels[i])
+
+            self.non_stable_ax.plot(date_range, percentile_df[0.5], color='white', linewidth=1)
+
+            self.non_stable_ax.set_title('GBM simulated prices (USD)', fontsize=10, color='white')
+            self.non_stable_ax.set_ylabel('USD ($)', fontsize=8, color='white')
+            self.non_stable_ax.set_ylim(0.05, 0.5)
+            self.non_stable_ax.tick_params(axis='both', which='major', labelsize=8, colors='white')
+            self.non_stable_ax.grid(True, linestyle=':', alpha=0.2, color='grey')
+
+            self.non_stable_ax.set_xlabel('')
+
+            self.non_stable_ax.text(0.02, 0.98, 'Token-USDC', transform=self.non_stable_ax.transAxes, 
+                                    fontsize=8, color='white', verticalalignment='top')
+
+            legend = self.non_stable_ax.legend(loc='upper left', bbox_to_anchor=(1, 1), fontsize=8)
+            for text in legend.get_texts():
+                text.set_color('white')
+
             self.non_stable_figure.tight_layout()
             self.non_stable_canvas.draw()
             
         except Exception as e:
             messagebox.showerror("Error", str(e))
-
+                                
+                                
     def calculate_pool_metrics(self, prices, initial_x, initial_y):
         k = initial_x * initial_y
         y_values = [k / price for price in prices]

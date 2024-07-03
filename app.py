@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, jsonify
 import numpy as np
+from scipy.stats import norm
 import pandas as pd
 from datetime import datetime, timedelta
 import copy
@@ -21,9 +22,12 @@ class LendingSimulation:
         self.max_ltv = 0.8
         self.liquidation_threshold = 0.9
         self.oracle_update_frequency = 60
+        self.total_deposits = 10000000  # New: total deposits in the protocol
+        self.interest_rate = 0.05  # New: annual interest rate
+        self.liquidation_penalty = 0.1  # New: liquidation penalty
 
     def update_price(self, new_price):
-        self.asset_price = new_price
+        self.asset_price = max(new_price, 0.000001)  # Ensure price is never zero
         return self.check_liquidation()
 
     def borrow(self, amount):
@@ -34,8 +38,29 @@ class LendingSimulation:
         return False
 
     def check_liquidation(self):
-        current_ltv = self.loan_amount / (self.collateral_amount * self.asset_price)
-        return current_ltv >= self.max_ltv * self.liquidation_threshold
+        if self.collateral_amount * self.asset_price > 0:
+            current_ltv = self.loan_amount / (self.collateral_amount * self.asset_price)
+            return current_ltv >= self.liquidation_threshold
+        return self.loan_amount > 0
+
+    def calculate_utilization_ratio(self):
+        return self.loan_amount / max(self.total_deposits, 0.000001)
+
+    def calculate_interest(self, days):
+        return self.loan_amount * (1 + self.interest_rate) ** (days / 365) - self.loan_amount
+
+    def liquidate(self):
+        liquidation_amount = self.loan_amount * (1 + self.liquidation_penalty)
+        collateral_value = self.collateral_amount * self.asset_price
+        if liquidation_amount > collateral_value:
+            self.collateral_amount = 0
+            self.loan_amount = max(0, self.loan_amount - collateral_value)
+        else:
+            self.collateral_amount = max(0, self.collateral_amount - liquidation_amount / self.asset_price)
+            self.loan_amount = 0
+
+################ OU ####################
+
 
 def simulate_OU_process(T, runs, ou_params):
     dt = 1.0
@@ -50,38 +75,67 @@ def simulate_OU_process(T, runs, ou_params):
             data[run, t] = X_t
     return data
 
+################ GBM ####################
+
 def geometric_brownian_motion(S0, mu, sigma, T, N, paths):
     dt = T/N
     t = np.linspace(0, T, N)
-    W = np.random.normal(0, np.sqrt(dt), size=(paths, N-1))
-    W = np.concatenate((np.zeros((paths, 1)), W), axis=1)
+    W = np.random.normal(0, np.sqrt(dt), size=(paths, N))
     W = np.cumsum(W, axis=1)
     
     X = (mu - 0.5 * sigma**2) * t + sigma * W
     S = S0 * np.exp(X)
     return S
 
-def run_boundary_analysis(simulation, price_scenarios):
+############## BOUNDARY ##################
+
+
+def run_boundary_analysis(simulation, price_scenarios, borrow_scenarios):
     results = []
-    for scenario in price_scenarios:
+    for price_scenario, borrow_scenario in zip(price_scenarios, borrow_scenarios):
         sim = copy.deepcopy(simulation)
-        max_borrowed = 0
         ltv_ratios = []
+        utilization_ratios = []
         liquidation_events = []
-        for price in scenario:
+        for day, (price, borrow_amount) in enumerate(zip(price_scenario, borrow_scenario)):
             liquidated = sim.update_price(price)
-            while sim.borrow(1000):
-                max_borrowed = sim.loan_amount
-            ltv_ratios.append(sim.loan_amount / (sim.collateral_amount * sim.asset_price))
-            liquidation_events.append(liquidated)
+            if not liquidated:
+                sim.borrow(borrow_amount)
+            else:
+                sim.liquidate()
+            
+            sim.loan_amount += sim.calculate_interest(1)  # Add daily interest
+            
+            # Safeguard against division by zero
+            if sim.collateral_amount * sim.asset_price > 0:
+                ltv_ratio = sim.loan_amount / (sim.collateral_amount * sim.asset_price)
+            else:
+                ltv_ratio = float('inf') if sim.loan_amount > 0 else 0
+            
+            ltv_ratios.append(float(ltv_ratio))
+            
+            # Safeguard against division by zero for utilization ratio
+            if sim.total_deposits > 0:
+                utilization_ratio = sim.loan_amount / sim.total_deposits
+            else:
+                utilization_ratio = 1 if sim.loan_amount > 0 else 0
+            
+            utilization_ratios.append(float(utilization_ratio))
+            liquidation_events.append(bool(liquidated))
+
         results.append({
-            'scenario': scenario,
-            'max_borrowed': max_borrowed,
-            'final_price': scenario[-1],
+            'price_scenario': [float(p) for p in price_scenario],
+            'borrow_scenario': [float(b) for b in borrow_scenario],
+            'final_price': float(price_scenario[-1]),
             'ltv_ratios': ltv_ratios,
+            'utilization_ratios': utilization_ratios,
             'liquidation_events': liquidation_events
         })
     return results
+
+
+
+############## APP ROUTES ##############
 
 @app.route('/')
 def index():
@@ -94,16 +148,27 @@ def run_lending_simulation():
     simulation.collateral_amount = float(data['collateral_amount'])
     simulation.max_ltv = float(data['max_ltv'])
     simulation.liquidation_threshold = float(data['liquidation_threshold'])
+    simulation.total_deposits = float(data['total_deposits'])
+    simulation.interest_rate = float(data['interest_rate'])
+    simulation.liquidation_penalty = float(data['liquidation_penalty'])
 
-    scenarios = [
-        [1.0] * 10,  # stable price
-        [1.0] * 5 + [10.0] + [1.0] * 4,  # price spike
-        [1.0] * 5 + [0.1] + [1.0] * 4,  # price crash
-        [1.0 + 0.1*i for i in range(10)],  # gradual increase
-        [1.0 - 0.05*i for i in range(10)]  # gradual decrease
+    price_scenarios = [
+        [1.0] * 365,  # stable price
+        [1.0 + 0.001*i for i in range(365)],  # gradual increase
+        [1.0 - 0.0005*i for i in range(365)],  # gradual decrease
+        [1.0 + 0.1*np.sin(2*np.pi*i/30) for i in range(365)],  # sinusoidal
+        [1.0] * 182 + [0.5] * 183,  # sudden crash
     ]
 
-    results = run_boundary_analysis(simulation, scenarios)
+    borrow_scenarios = [
+        [1000] * 365,  # constant borrowing
+        [1000 + 10*i for i in range(365)],  # increasing borrowing
+        [5000 - 10*i for i in range(365)],  # decreasing borrowing
+        [5000 if i % 30 == 0 else 0 for i in range(365)],  # periodic large borrows
+        [0] * 365,  # no additional borrowing
+    ]
+
+    results = run_boundary_analysis(simulation, price_scenarios, borrow_scenarios)
     return jsonify(results)
 
 @app.route('/run_stable_pool_simulation', methods=['POST'])
@@ -130,20 +195,22 @@ def run_non_stable_pool_simulation():
     mu = float(data['mu'])
     sigma = float(data['sigma'])
     paths = int(data['paths'])
-    T = 1
-    N = 365
+    T = 1  # 1 year simulation
+    N = 365  # Daily price points
 
     prices = geometric_brownian_motion(S0, mu, sigma, T, N, paths)
+    
     df = pd.DataFrame(prices.T)
-    median_prices = df.median(axis=1).tolist()
-    min_prices = df.min(axis=1).tolist()
-    max_prices = df.max(axis=1).tolist()
+    percentiles = [5, 25, 50, 75, 95]
+    percentile_df = df.quantile(q=[p/100 for p in percentiles], axis=1).T
+
+    start_date = datetime(2023, 1, 1)
+    date_range = [(start_date + timedelta(days=i)).strftime('%Y-%m-%d') for i in range(N)]
 
     return jsonify({
-        'median_prices': median_prices,
-        'min_prices': min_prices,
-        'max_prices': max_prices,
-        'days': list(range(N))
+        'dates': date_range,
+        'percentile_prices': percentile_df.values.T.tolist(),
+        'median_prices': percentile_df[0.5].tolist()
     })
 
 if __name__ == '__main__':

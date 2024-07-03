@@ -6,6 +6,8 @@
     <title>Unit Zero Simulation Lab</title>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <style>
         :root {
             --background: #1A1A2E;
@@ -144,6 +146,18 @@
             <input type="number" id="liquidation-threshold" placeholder=" ">
             <label for="liquidation-threshold">Liquidation Threshold</label>
         </div>
+        <div class="input-container">
+            <input type="number" id="total-deposits" placeholder=" ">
+            <label for="total-deposits">Total Deposits</label>
+        </div>
+        <div class="input-container">
+            <input type="number" id="interest-rate" step="0.01" placeholder=" ">
+            <label for="interest-rate">Annual Interest Rate</label>
+        </div>
+        <div class="input-container">
+            <input type="number" id="liquidation-penalty" step="0.01" placeholder=" ">
+            <label for="liquidation-penalty">Liquidation Penalty</label>
+        </div>
         <button onclick="runLendingSimulation()">Run Simulation</button>
         <div id="lending-chart"></div>
     </div>
@@ -254,7 +268,10 @@
             const data = {
                 collateral_amount: parseFloat(document.getElementById('collateral-amount').value),
                 max_ltv: parseFloat(document.getElementById('max-ltv').value),
-                liquidation_threshold: parseFloat(document.getElementById('liquidation-threshold').value)
+                liquidation_threshold: parseFloat(document.getElementById('liquidation-threshold').value),
+                total_deposits: parseFloat(document.getElementById('total-deposits').value),
+                interest_rate: parseFloat(document.getElementById('interest-rate').value),
+                liquidation_penalty: parseFloat(document.getElementById('liquidation-penalty').value)
             };
 
             fetch('/run_lending_simulation', {
@@ -266,28 +283,41 @@
             })
             .then(response => response.json())
             .then(data => {
-                const traces = data.map((result, index) => ({
-                    x: Array.from(Array(result.scenario.length).keys()),
-                    y: result.scenario,
-                    mode: 'lines',
-                    name: `Scenario ${index + 1}`
-                }));
-
-                traces.push({
-                    x: Array.from(Array(data[0].scenario.length).keys()),
-                    y: data[0].ltv_ratios,
-                    mode: 'lines',
-                    name: 'LTV Ratio',
-                    yaxis: 'y2'
-                });
+                const traces = data.map((result, index) => [
+                    {
+                        x: Array.from(Array(result.price_scenario.length).keys()),
+                        y: result.price_scenario,
+                        mode: 'lines',
+                        name: `Price Scenario ${index + 1}`
+                    },
+                    {
+                        x: Array.from(Array(result.ltv_ratios.length).keys()),
+                        y: result.ltv_ratios,
+                        mode: 'lines',
+                        name: `LTV Ratio ${index + 1}`,
+                        yaxis: 'y2'
+                    },
+                    {
+                        x: Array.from(Array(result.utilization_ratios.length).keys()),
+                        y: result.utilization_ratios,
+                        mode: 'lines',
+                        name: `Utilization Ratio ${index + 1}`,
+                        yaxis: 'y3'
+                    }
+                ]).flat();
 
                 const layout = {
                     ...plotlyLayout,
                     title: 'Lending Simulation Results',
-                    xaxis: { title: 'Time' },
+                    xaxis: { title: 'Days' },
                     yaxis: { title: 'Asset Price' },
                     yaxis2: {
                         title: 'LTV Ratio',
+                        overlaying: 'y',
+                        side: 'right'
+                    },
+                    yaxis3: {
+                        title: 'Utilization Ratio',
                         overlaying: 'y',
                         side: 'right'
                     },
@@ -353,37 +383,82 @@
             .then(data => {
                 const traces = [
                     {
-                        x: data.days,
+                        x: data.dates,
+                        y: data.percentile_prices[4],
+                        fill: 'tonexty',
+                        fillcolor: 'rgba(0, 255, 255, 0.1)',
+                        line: {color: 'rgba(0, 255, 255, 0)'},
+                        name: '95th Percentile',
+                        showlegend: false
+                    },
+                    {
+                        x: data.dates,
+                        y: data.percentile_prices[3],
+                        fill: 'tonexty',
+                        fillcolor: 'rgba(0, 255, 255, 0.2)',
+                        line: {color: 'rgba(0, 255, 255, 0)'},
+                        name: '75th Percentile',
+                        showlegend: false
+                    },
+                    {
+                        x: data.dates,
+                        y: data.percentile_prices[1],
+                        fill: 'tonexty',
+                        fillcolor: 'rgba(255, 105, 180, 0.2)',
+                        line: {color: 'rgba(255, 105, 180, 0)'},
+                        name: '25th Percentile',
+                        showlegend: false
+                    },
+                    {
+                        x: data.dates,
+                        y: data.percentile_prices[0],
+                        fill: 'tonexty',
+                        fillcolor: 'rgba(255, 20, 147, 0.1)',
+                        line: {color: 'rgba(255, 20, 147, 0)'},
+                        name: '5th Percentile',
+                        showlegend: false
+                    },
+                    {
+                        x: data.dates,
                         y: data.median_prices,
-                        mode: 'lines',
+                        line: {color: 'white', width: 2},
                         name: 'Median Price'
-                    },
-                    {
-                        x: data.days,
-                        y: data.min_prices,
-                        mode: 'lines',
-                        name: 'Min Price',
-                        line: {dash: 'dot'}
-                    },
-                    {
-                        x: data.days,
-                        y: data.max_prices,
-                        mode: 'lines',
-                        name: 'Max Price',
-                        line: {dash: 'dot'}
                     }
                 ];
 
                 const layout = {
                     ...plotlyLayout,
-                    title: 'Non-Stable Pool Simulation Results',
-                    xaxis: { title: 'Days' },
-                    yaxis: { title: 'Price' }
+                    title: 'GBM simulated token prices (USD)',
+                    xaxis: { 
+                        title: '',
+                        gridcolor: 'rgba(255, 255, 255, 0.1)',
+                        tickformat: '%Y-%m'
+                    },
+                    yaxis: { 
+                        title: 'USD ($)',
+                        gridcolor: 'rgba(255, 255, 255, 0.1)',
+                        tickformat: '.2f'
+                    },
+                    showlegend: false,
+                    annotations: [{
+                        x: 0.02,
+                        y: 0.98,
+                        xref: 'paper',
+                        yref: 'paper',
+                        text: 'Token-USDC',
+                        showarrow: false,
+                        font: {
+                            color: 'white',
+                            size: 14
+                        }
+                    }]
                 };
 
                 Plotly.newPlot('non-stable-chart', traces, layout);
             });
         }
+        
     </script>
+    
 </body>
 </html>

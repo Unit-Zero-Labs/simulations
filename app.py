@@ -197,7 +197,7 @@ def run_non_stable_pool_simulation():
     sigma = float(data['sigma'])
     paths = int(data['paths'])
     T = 1  # 1 year simulation
-    N = 365  # Daily price points
+    N = 365  # daily price points
 
     prices = geometric_brownian_motion(S0, mu, sigma, T, N, paths)
     

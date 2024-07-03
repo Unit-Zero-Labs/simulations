@@ -47,7 +47,7 @@ def simulate_OU_process(T, runs, ou_params):
 class LendingSimulation:
     def __init__(self):
         self.asset_price = 1.0  # starting normalized price
-        self.collateral_amount = 1000000  # Initial collateral in USD
+        self.collateral_amount = 1000000  # init collateral in USD
         self.loan_amount = 0
         self.max_ltv = 0.8  # max LTV ratio
         self.liquidation_threshold = 0.9  # liq occurs at 90% of max LTV

@@ -274,7 +274,7 @@
                 liquidation_penalty: parseFloat(document.getElementById('liquidation-penalty').value)
             };
 
-            fetch("{{ url_for('lending.run_lending_simulation') }}", {
+            fetch('/run_lending_simulation', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -337,7 +337,7 @@
                 days: parseInt(document.getElementById('stable-days').value)
             };
 
-            fetch("{{ url_for('stable_pool.run_stable_pool_simulation') }}", {
+            fetch('/run_stable_pool_simulation', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -384,7 +384,7 @@
                 paths: parseInt(document.getElementById('non-stable-paths').value)
             };
 
-            fetch("{{ url_for('non_stable_pool.run_non_stable_pool_simulation') }}", {
+            fetch('/run_non_stable_pool_simulation', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

@@ -26,7 +26,6 @@ def run_tokenomics_simulation():
         initial_token_circulating=float(data['initial_token_circulating']),
         monthly_liquidations=float(data['monthly_liquidations']),
         monthly_sequencer_fees=float(data['monthly_sequencer_fees']),
-        revenue_distribution_percentage=float(data['revenue_distribution_percentage']),
         lender_percentage=float(data['lender_percentage']),
         reserve_fee=float(data['reserve_fee']),
         admin_fee=float(data['admin_fee']),

@@ -6,7 +6,7 @@ class TokenomicsSimulation:
         for key, value in kwargs.items():
             setattr(self, key, value)
         
-        required_params = ['initial_reserves', 'token_price', 'protocol_revenue_share', 'target_utilization','total_tokens_emitted']
+        required_params = ['initial_reserves', 'token_price', 'protocol_revenue_share', 'target_utilization', 'total_token_emitted']
         for param in required_params:
             if param not in kwargs:
                 raise ValueError(f"'{param}' is a required parameter")

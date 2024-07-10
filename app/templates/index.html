@@ -752,11 +752,13 @@
                 utilization: parseFloat(document.getElementById('utilization').value) / 100,
                 borrow_interest: parseFloat(document.getElementById('borrow-interest').value) / 100,
                 supply_interest: parseFloat(document.getElementById('supply-interest').value) / 100,
-                token_circulating: parseFloat(document.getElementById('token-circulating').value)
+                token_circulating: parseFloat(document.getElementById('token-circulating').value),
+                initial_reserves: 1000000,  
+                monthly_expenses: 100000  
             };
 
             const advancedData = {
-                total_token_emitted: 300000000, // This is a constant
+                total_token_emitted: 300000000, // constant
                 mom_tvl_growth: parseFloat(document.getElementById('mom_tvl_growth').value),
                 mom_borrow_growth: parseFloat(document.getElementById('mom_borrow_growth').value),
                 base_monthly_emissions_rate: parseFloat(document.getElementById('base_monthly_emissions_rate').value),
@@ -797,28 +799,22 @@
             .then(data => {
                 const traces = [
                     {
-                        x: data.months,
-                        y: data.tvl,
+                        x: data.simulations[0].map(d => d.month),
+                        y: data.simulations[0].map(d => d.runway),
                         mode: 'lines',
-                        name: 'TVL'
+                        name: 'Runway (months)'
                     },
                     {
-                        x: data.months,
-                        y: data.borrow,
+                        x: data.simulations[0].map(d => d.month),
+                        y: data.simulations[0].map(d => d.net_income),
                         mode: 'lines',
-                        name: 'Borrow'
+                        name: 'Monthly Net Income'
                     },
                     {
-                        x: data.months,
-                        y: data.token_circulating,
+                        x: data.simulations[0].map(d => d.month),
+                        y: data.simulations[0].map(d => d.reserves),
                         mode: 'lines',
-                        name: 'Token Circulating'
-                    },
-                    {
-                        x: data.months,
-                        y: data.cumulative_revenue,
-                        mode: 'lines',
-                        name: 'Cumulative Revenue'
+                        name: 'Reserves'
                     }
                 ];
 

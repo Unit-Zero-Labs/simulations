@@ -250,6 +250,7 @@
             <button onclick="setScenario('base')">Base</button>
             <button onclick="setScenario('bull')">Bull</button>
         </div>
+        <button onclick="runTokenomicsSimulation()">Run Simulation</button>
     
         <button onclick="toggleAdvancedFeatures()">Advanced Features</button>
     
@@ -348,9 +349,9 @@
                 <input type="number" id="num-months" placeholder=" ">
                 <label for="num-months">Number of Months</label>
             </div>
-            <button onclick="runTokenomicsSimulation()">Run Simulation</button>
-            <div id="tokenomics-chart"></div>
-        </div>
+            
+        <div id="tokenomics-chart"></div>
+    </div>
 
     <script>
         const plotlyLayout = {

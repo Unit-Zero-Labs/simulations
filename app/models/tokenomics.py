@@ -95,8 +95,8 @@ class TokenomicsSimulation:
             'utilization': {p: np.percentile([d['utilization'] for d in final_month_data], p) for p in percentiles},
             'total_revenue': {p: np.percentile([d['total_revenue'] for d in final_month_data], p) for p in percentiles},
             'token_circulating': {p: np.percentile([d['token_circulating'] for d in final_month_data], p) for p in percentiles},
-            'cumulative_revenue': {p: np.percentile([d['cumulative_revenue'] for d in final_month_data], p) for p in percentiles}
-            'runway': {p: np.percentile([d['runway'] for d in final_month_data], p) for p in percentiles}
+            'cumulative_revenue': {p: np.percentile([d['cumulative_revenue'] for d in final_month_data], p) for p in percentiles},
+            'runway': {p: np.percentile([d['runway'] for d in final_month_data], p) for p in percentiles},
             'net_income': {p: np.percentile([d['net_income'] for d in final_month_data], p) for p in percentiles}
 
         

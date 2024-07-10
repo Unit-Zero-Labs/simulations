@@ -213,121 +213,144 @@
 
     <div id="tokenomics" class="tab-content">
         <h2>Tokenomics Builder</h2>
-        <div class="input-container">
-            <input type="number" id="total-token-emitted" placeholder=" ">
-            <label for="total-token-emitted">Total Token Emitted</label>
+        <div id="basic-inputs">
+            <h3>Protocol Metrics</h3>
+            <div class="input-container">
+                <input type="number" id="tvl" placeholder=" ">
+                <label for="tvl">TVL ($)</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="borrow" placeholder=" ">
+                <label for="borrow">Borrow ($)</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="cash" placeholder=" ">
+                <label for="cash">Cash ($)</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="utilization" step="0.01" placeholder=" ">
+                <label for="utilization">Utilization (%)</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="borrow-interest" step="0.01" placeholder=" ">
+                <label for="borrow-interest">Borrow Interest (%)</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="supply-interest" step="0.01" placeholder=" ">
+                <label for="supply-interest">Supply Interest Rate (%)</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="token-circulating" placeholder=" ">
+                <label for="token-circulating">Total Token Circulating</label>
+            </div>
         </div>
-        <div class="input-container">
-            <input type="number" id="base-monthly-emissions-rate" step="0.0001" placeholder=" ">
-            <label for="base-monthly-emissions-rate">Base Monthly Emissions Rate</label>
+
+        <div id="scenario-buttons">
+            <button onclick="setScenario('bear')">Bear</button>
+            <button onclick="setScenario('base')">Base</button>
+            <button onclick="setScenario('bull')">Bull</button>
         </div>
-        <div class="input-container">
-            <input type="number" id="emissions-step-up" step="0.01" placeholder=" ">
-            <label for="emissions-step-up">Emissions Step Up</label>
+    
+        <button onclick="toggleAdvancedFeatures()">Advanced Features</button>
+    
+        <div id="advanced-inputs" style="display: none;">
+
+
+            <div class="input-container">
+                <input type="number" id="total-token-emitted" placeholder=" ">
+                <label for="total-token-emitted">Total Token Emitted</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="base-monthly-emissions-rate" step="0.0001" placeholder=" ">
+                <label for="base-monthly-emissions-rate">Base Monthly Emissions Rate</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="emissions-step-up" step="0.01" placeholder=" ">
+                <label for="emissions-step-up">Emissions Step Up</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="mom_tvl_growth" step="0.001" placeholder=" ">
+                <label for="mom_tvl_growth">MoM TVL Growth</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="mom_borrow_growth" step="0.001" placeholder=" ">
+                <label for="mom_borrow_growth">MoM Borrow Growth</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="base_monthly_emissions_rate" step="0.0001" placeholder=" ">
+                <label for="base_monthly_emissions_rate">Base Monthly Emissions Rate</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="emissions_step_up" step="0.01" placeholder=" ">
+                <label for="emissions_step_up">Emissions Step Up</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="token_price" step="0.0001" placeholder=" ">
+                <label for="token_price">Token Price</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="total_team_allocation" placeholder=" ">
+                <label for="total_team_allocation">Total Team Allocation</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="base_vesting_per_month" step="0.0001" placeholder=" ">
+                <label for="base_vesting_per_month">Base Vesting per Month</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="vesting_step_up" step="0.01" placeholder=" ">
+                <label for="vesting_step_up">Vesting Step Up</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="monthly_liquidations" step="0.00001" placeholder=" ">
+                <label for="monthly_liquidations">Monthly Liquidations (% of TVL)</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="monthly_sequencer_fees" step="0.00001" placeholder=" ">
+                <label for="monthly_sequencer_fees">Monthly Sequencer Fees (% of TVL)</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="revenue_distribution_percentage" step="0.01" placeholder=" ">
+                <label for="revenue_distribution_percentage">Revenue Distribution Percentage</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="lender_percentage" step="0.01" placeholder=" ">
+                <label for="lender_percentage">Lender Percentage</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="reserve_fee" step="0.01" placeholder=" ">
+                <label for="reserve_fee">Reserve Fee</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="admin_fee" step="0.01" placeholder=" ">
+                <label for="admin_fee">Admin Fee</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="protocol_fee" step="0.01" placeholder=" ">
+                <label for="protocol_fee">Protocol Fee</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="liquidation_fee" step="0.01" placeholder=" ">
+                <label for="liquidation_fee">Liquidation Fee</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="base_rate" step="0.0001" placeholder=" ">
+                <label for="base_rate">Base Rate</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="jump_multiplier" step="0.01" placeholder=" ">
+                <label for="jump_multiplier">Jump Multiplier</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="num-simulations" placeholder=" ">
+                <label for="num-simulations">Number of Simulations</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="num-months" placeholder=" ">
+                <label for="num-months">Number of Months</label>
+            </div>
+            <button onclick="runTokenomicsSimulation()">Run Simulation</button>
+            <div id="tokenomics-chart"></div>
         </div>
-        <div class="input-container">
-            <input type="number" id="mom-tvl-growth" step="0.001" placeholder=" ">
-            <label for="mom-tvl-growth">MoM TVL Growth</label>
-        </div>
-        <div class="input-container">
-            <input type="number" id="mom-borrow-growth" step="0.001" placeholder=" ">
-            <label for="mom-borrow-growth">MoM Borrow Growth</label>
-        </div>
-        <div class="input-container">
-            <input type="number" id="initial-tvl" placeholder=" ">
-            <label for="initial-tvl">Initial TVL</label>
-        </div>
-        <div class="input-container">
-            <input type="number" id="initial-borrow" placeholder=" ">
-            <label for="initial-borrow">Initial Borrow</label>
-        </div>
-        <div class="input-container">
-            <input type="number" id="initial-token-circulating" placeholder=" ">
-            <label for="initial-token-circulating">Initial Token Circulating</label>
-        </div>
-        <div class="input-container">
-            <input type="number" id="token-price" step="0.0001" placeholder=" ">
-            <label for="token-price">Token Price</label>
-        </div>
-        <div class="input-container">
-            <input type="number" id="total-team-allocation" placeholder=" ">
-            <label for="total-team-allocation">Total Team Allocation</label>
-        </div>
-        <div class="input-container">
-            <input type="number" id="cliff" placeholder=" ">
-            <label for="cliff">Cliff (months)</label>
-        </div>
-        <div class="input-container">
-            <input type="number" id="vesting-months" placeholder=" ">
-            <label for="vesting-months">Vesting Months</label>
-        </div>
-        <div class="input-container">
-            <input type="number" id="base-vesting-per-month" step="0.0001" placeholder=" ">
-            <label for="base-vesting-per-month">Base Vesting per Month</label>
-        </div>
-        <div class="input-container">
-            <input type="number" id="vesting-step-up" step="0.01" placeholder=" ">
-            <label for="vesting-step-up">Vesting Step Up</label>
-        </div>
-        <div class="input-container">
-            <input type="number" id="monthly-liquidations" step="0.00001" placeholder=" ">
-            <label for="monthly-liquidations">Monthly Liquidations (% of TVL)</label>
-        </div>
-        <div class="input-container">
-            <input type="number" id="monthly-sequencer-fees" step="0.00001" placeholder=" ">
-            <label for="monthly-sequencer-fees">Monthly Sequencer Fees (% of TVL)</label>
-        </div>
-        <div class="input-container">
-            <input type="number" id="revenue-distribution-percentage" step="0.01" placeholder=" ">
-            <label for="revenue-distribution-percentage">Revenue Distribution Percentage</label>
-        </div>
-        <div class="input-container">
-            <input type="number" id="lender-percentage" step="0.01" placeholder=" ">
-            <label for="lender-percentage">Lender Percentage</label>
-        </div>
-        <div class="input-container">
-            <input type="number" id="reserve-fee" step="0.01" placeholder=" ">
-            <label for="reserve-fee">Reserve Fee</label>
-        </div>
-        <div class="input-container">
-            <input type="number" id="admin-fee" step="0.01" placeholder=" ">
-            <label for="admin-fee">Admin Fee</label>
-        </div>
-        <div class="input-container">
-            <input type="number" id="protocol-fee" step="0.01" placeholder=" ">
-            <label for="protocol-fee">Protocol Fee</label>
-        </div>
-        <div class="input-container">
-            <input type="number" id="liquidation-fee" step="0.01" placeholder=" ">
-            <label for="liquidation-fee">Liquidation Fee</label>
-        </div>
-        <div class="input-container">
-            <input type="number" id="base-rate" step="0.0001" placeholder=" ">
-            <label for="base-rate">Base Rate</label>
-        </div>
-        <div class="input-container">
-            <input type="number" id="multiplier" step="0.01" placeholder=" ">
-            <label for="multiplier">Multiplier</label>
-        </div>
-        <div class="input-container">
-            <input type="number" id="kink" step="0.01" placeholder=" ">
-            <label for="kink">Kink</label>
-        </div>
-        <div class="input-container">
-            <input type="number" id="jump-multiplier" step="0.01" placeholder=" ">
-            <label for="jump-multiplier">Jump Multiplier</label>
-        </div>
-        <div class="input-container">
-            <input type="number" id="num-simulations" placeholder=" ">
-            <label for="num-simulations">Number of Simulations</label>
-        </div>
-        <div class="input-container">
-            <input type="number" id="num-months" placeholder=" ">
-            <label for="num-months">Number of Months</label>
-        </div>
-        <button onclick="runTokenomicsSimulation()">Run Simulation</button>
-        <div id="tokenomics-chart"></div>
-    </div>
 
     <script>
         const plotlyLayout = {
@@ -588,90 +611,197 @@
                 Plotly.newPlot('non-stable-chart', traces, layout);
             });
         }
-        function runTokenomicsSimulation() {
-        const data = {
-            total_token_emitted: parseFloat(document.getElementById('total-token-emitted').value),
-            base_monthly_emissions_rate: parseFloat(document.getElementById('base-monthly-emissions-rate').value),
-            emissions_step_up: parseFloat(document.getElementById('emissions-step-up').value),
-            mom_tvl_growth: parseFloat(document.getElementById('mom-tvl-growth').value),
-            mom_borrow_growth: parseFloat(document.getElementById('mom-borrow-growth').value),
-            initial_tvl: parseFloat(document.getElementById('initial-tvl').value),
-            initial_borrow: parseFloat(document.getElementById('initial-borrow').value),
-            initial_token_circulating: parseFloat(document.getElementById('initial-token-circulating').value),
-            token_price: parseFloat(document.getElementById('token-price').value),
-            total_team_allocation: parseFloat(document.getElementById('total-team-allocation').value),
-            cliff: parseInt(document.getElementById('cliff').value),
-            vesting_months: parseInt(document.getElementById('vesting-months').value),
-            base_vesting_per_month: parseFloat(document.getElementById('base-vesting-per-month').value),
-            vesting_step_up: parseFloat(document.getElementById('vesting-step-up').value),
-            monthly_liquidations: parseFloat(document.getElementById('monthly-liquidations').value),
-            monthly_sequencer_fees: parseFloat(document.getElementById('monthly-sequencer-fees').value),
-            revenue_distribution_percentage: parseFloat(document.getElementById('revenue-distribution-percentage').value),
-            lender_percentage: parseFloat(document.getElementById('lender-percentage').value),
-            reserve_fee: parseFloat(document.getElementById('reserve-fee').value),
-            admin_fee: parseFloat(document.getElementById('admin-fee').value),
-            protocol_fee: parseFloat(document.getElementById('protocol-fee').value),
-            liquidation_fee: parseFloat(document.getElementById('liquidation-fee').value),
-            base_rate: parseFloat(document.getElementById('base-rate').value),
-            multiplier: parseFloat(document.getElementById('multiplier').value),
-            kink: parseFloat(document.getElementById('kink').value),
-            jump_multiplier: parseFloat(document.getElementById('jump-multiplier').value),
-            num_simulations: parseInt(document.getElementById('num-simulations').value),
-            num_months: parseInt(document.getElementById('num-months').value)
+        const scenarios = {
+            bear: {
+                mom_tvl_growth: 0.01,
+                mom_borrow_growth: 0.02,
+                base_monthly_emissions_rate: 0.005,
+                emissions_step_up: 0.15,
+                token_price: 0.02,
+                total_team_allocation: 150000000,
+                cliff: 12,
+                vesting_months: 48,
+                base_vesting_per_month: 0.0188,
+                vesting_step_up: 0.08,
+                monthly_liquidations: 0.004,
+                monthly_sequencer_fees: 0.004,
+                revenue_distribution_percentage: 0.45,
+                lender_percentage: 0.65,
+                reserve_fee: 0.12,
+                admin_fee: 0.12,
+                protocol_fee: 0.11,
+                liquidation_fee: 0.08,
+                base_rate: 0.01,
+                multiplier: 0.15,
+                kink: 0.75,
+                jump_multiplier: 3.5
+            },
+            base: {
+                mom_tvl_growth: 0.025,
+                mom_borrow_growth: 0.05,
+                base_monthly_emissions_rate: 0.0075,
+                emissions_step_up: 0.20,
+                token_price: 0.03,
+                total_team_allocation: 150000000,
+                cliff: 12,
+                vesting_months: 48,
+                base_vesting_per_month: 0.0208,
+                vesting_step_up: 0.10,
+                monthly_liquidations: 0.005,
+                monthly_sequencer_fees: 0.005,
+                revenue_distribution_percentage: 0.50,
+                lender_percentage: 0.70,
+                reserve_fee: 0.10,
+                admin_fee: 0.10,
+                protocol_fee: 0.10,
+                liquidation_fee: 0.10,
+                base_rate: 0.00,
+                multiplier: 0.18,
+                kink: 0.80,
+                jump_multiplier: 4.0
+            },
+            bull: {
+                mom_tvl_growth: 0.04,
+                mom_borrow_growth: 0.08,
+                base_monthly_emissions_rate: 0.01,
+                emissions_step_up: 0.25,
+                token_price: 0.04,
+                total_team_allocation: 150000000,
+                cliff: 12,
+                vesting_months: 48,
+                base_vesting_per_month: 0.0228,
+                vesting_step_up: 0.12,
+                monthly_liquidations: 0.006,
+                monthly_sequencer_fees: 0.006,
+                revenue_distribution_percentage: 0.55,
+                lender_percentage: 0.75,
+                reserve_fee: 0.08,
+                admin_fee: 0.08,
+                protocol_fee: 0.09,
+                liquidation_fee: 0.12,
+                base_rate: 0.00,
+                multiplier: 0.20,
+                kink: 0.85,
+                jump_multiplier: 4.5
+            }
         };
 
-        fetch('/run_tokenomics_simulation', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data),
-        })
-        .then(response => response.json())
-        .then(data => {
-            const traces = [
-                {
-                    x: Array.from(Array(data.summary.tvl[50].length).keys()),
-                    y: data.summary.tvl[50],
-                    mode: 'lines',
-                    name: 'Median TVL'
-                },
-                {
-                    x: Array.from(Array(data.summary.borrow[50].length).keys()),
-                    y: data.summary.borrow[50],
-                    mode: 'lines',
-                    name: 'Median Borrow'
-                },
-                {
-                    x: Array.from(Array(data.summary.total_revenue[50].length).keys()),
-                    y: data.summary.total_revenue[50],
-                    mode: 'lines',
-                    name: 'Median Total Revenue'
-                },
-                {
-                    x: Array.from(Array(data.summary.token_circulating[50].length).keys()),
-                    y: data.summary.token_circulating[50],
-                    mode: 'lines',
-                    name: 'Median Token Circulating'
-                },
-                {
-                    x: Array.from(Array(data.summary.cumulative_revenue[50].length).keys()),
-                    y: data.summary.cumulative_revenue[50],
-                    mode: 'lines',
-                    name: 'Median Cumulative Revenue'
+        function setScenario(scenario) {
+            const params = scenarios[scenario];
+            for (const [key, value] of Object.entries(params)) {
+                if (document.getElementById(key)) {
+                    document.getElementById(key).value = value;
                 }
-            ];
+            }
+            updateBasicInputs(scenario);
+        }
 
-            const layout = {
-                ...plotlyLayout,
-                title: 'Tokenomics Simulation Results',
-                xaxis: { title: 'Months' },
-                yaxis: { title: 'Value' }
+        function updateBasicInputs(scenario) {
+            const growth = scenario === 'bear' ? 1.1 : (scenario === 'base' ? 1.25 : 1.4);
+            
+            document.getElementById('tvl').value = (266290000 * growth).toFixed(0);
+            document.getElementById('borrow').value = (28680000 * growth).toFixed(0);
+            document.getElementById('cash').value = (237610000 * growth).toFixed(0);
+            document.getElementById('utilization').value = (10.77 * (scenario === 'bear' ? 0.9 : (scenario === 'base' ? 1 : 1.1))).toFixed(2);
+            document.getElementById('borrow-interest').value = (2 * (scenario === 'bear' ? 0.9 : (scenario === 'base' ? 1 : 1.1))).toFixed(2);
+            document.getElementById('supply-interest').value = (0.15 * (scenario === 'bear' ? 0.9 : (scenario === 'base' ? 1 : 1.1))).toFixed(2);
+            document.getElementById('token-circulating').value = (40000000 * (scenario === 'bear' ? 1.1 : (scenario === 'base' ? 1.25 : 1.4))).toFixed(0);
+        }
+
+        function toggleAdvancedFeatures() {
+            const advancedInputs = document.getElementById('advanced-inputs');
+            advancedInputs.style.display = advancedInputs.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function runTokenomicsSimulation() {
+            const basicData = {
+                tvl: parseFloat(document.getElementById('tvl').value),
+                borrow: parseFloat(document.getElementById('borrow').value),
+                cash: parseFloat(document.getElementById('cash').value),
+                utilization: parseFloat(document.getElementById('utilization').value) / 100,
+                borrow_interest: parseFloat(document.getElementById('borrow-interest').value) / 100,
+                supply_interest: parseFloat(document.getElementById('supply-interest').value) / 100,
+                token_circulating: parseFloat(document.getElementById('token-circulating').value)
             };
 
-            Plotly.newPlot('tokenomics-chart', traces, layout);
-        });
-    }
+            const advancedData = {
+                total_token_emitted: 300000000, // This is a constant
+                mom_tvl_growth: parseFloat(document.getElementById('mom_tvl_growth').value),
+                mom_borrow_growth: parseFloat(document.getElementById('mom_borrow_growth').value),
+                base_monthly_emissions_rate: parseFloat(document.getElementById('base_monthly_emissions_rate').value),
+                emissions_step_up: parseFloat(document.getElementById('emissions_step_up').value),
+                token_price: parseFloat(document.getElementById('token_price').value),
+                total_team_allocation: parseFloat(document.getElementById('total_team_allocation').value),
+                cliff: parseInt(document.getElementById('cliff').value),
+                vesting_months: parseInt(document.getElementById('vesting_months').value),
+                base_vesting_per_month: parseFloat(document.getElementById('base_vesting_per_month').value),
+                vesting_step_up: parseFloat(document.getElementById('vesting_step_up').value),
+                monthly_liquidations: parseFloat(document.getElementById('monthly_liquidations').value),
+                monthly_sequencer_fees: parseFloat(document.getElementById('monthly_sequencer_fees').value),
+                revenue_distribution_percentage: parseFloat(document.getElementById('revenue_distribution_percentage').value),
+                lender_percentage: parseFloat(document.getElementById('lender_percentage').value),
+                reserve_fee: parseFloat(document.getElementById('reserve_fee').value),
+                admin_fee: parseFloat(document.getElementById('admin_fee').value),
+                protocol_fee: parseFloat(document.getElementById('protocol_fee').value),
+                liquidation_fee: parseFloat(document.getElementById('liquidation_fee').value),
+                base_rate: parseFloat(document.getElementById('base_rate').value),
+                multiplier: parseFloat(document.getElementById('multiplier').value),
+                kink: parseFloat(document.getElementById('kink').value),
+                jump_multiplier: parseFloat(document.getElementById('jump_multiplier').value),
+                num_simulations: parseInt(document.getElementById('num_simulations').value),
+                num_months: parseInt(document.getElementById('num_months').value)
+            };
+
+            const data = { ...basicData, ...advancedData };
+
+
+            fetch('/run_tokenomics_simulation', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+            .then(response => response.json())
+            .then(data => {
+                const traces = [
+                    {
+                        x: data.months,
+                        y: data.tvl,
+                        mode: 'lines',
+                        name: 'TVL'
+                    },
+                    {
+                        x: data.months,
+                        y: data.borrow,
+                        mode: 'lines',
+                        name: 'Borrow'
+                    },
+                    {
+                        x: data.months,
+                        y: data.token_circulating,
+                        mode: 'lines',
+                        name: 'Token Circulating'
+                    },
+                    {
+                        x: data.months,
+                        y: data.cumulative_revenue,
+                        mode: 'lines',
+                        name: 'Cumulative Revenue'
+                    }
+                ];
+
+                const layout = {
+                    ...plotlyLayout,
+                    title: 'Tokenomics Simulation Results',
+                    xaxis: { title: 'Months' },
+                    yaxis: { title: 'Value' }
+                };
+
+                Plotly.newPlot('tokenomics-chart', traces, layout);
+            });
+        }
+
     </script>
     
 </body>

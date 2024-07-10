@@ -795,37 +795,43 @@
                 }
                 chartContainer.style.display = 'block';
 
+                const safeLog = (value) => {
+                    if (value <= 0) return null;  
+                    return Math.log10(value);
+                };
+
                 const traces = [
                     {
                         x: data.simulations[0].map(d => d.month),
-                        y: data.simulations[0].map(d => Math.max(d.runway, 1)),
+                        y: data.simulations[0].map(d => safeLog(d.runway)),
                         mode: 'lines',
                         name: 'Runway (months)'
                     },
                     {
                         x: data.simulations[0].map(d => d.month),
-                        y: data.simulations[0].map(d => Math.max(d.net_income, 1)),
+                        y: data.simulations[0].map(d => safeLog(Math.abs(d.net_income))),
                         mode: 'lines',
-                        name: 'Monthly Net Income'
+                        name: 'Monthly Net Income (absolute value)'
                     },
                     {
                         x: data.simulations[0].map(d => d.month),
-                        y: data.simulations[0].map(d => Math.max(d.reserves, 1)),
+                        y: data.simulations[0].map(d => safeLog(d.stable_reserves)),
                         mode: 'lines',
-                        name: 'Reserves'
+                        name: 'Stable Reserves'
                     }
                 ];
 
-                console.log("Traces:", traces);  // log traces
+                console.log("Traces:", traces);
 
                 const layout = {
                     ...plotlyLayout,
                     title: 'Tokenomics Builder Sim Results',
                     xaxis: { title: 'Months' },
                     yaxis: { 
-                        title: 'Value', 
-                        type: 'log',
-                        autorange: true}
+                        title: 'Value (log scale)',
+                        type: 'linear',  // manually calculating log values
+                        autorange: true
+                    }
                 };
 
                 Plotly.newPlot('tokenomics-chart', traces, layout)

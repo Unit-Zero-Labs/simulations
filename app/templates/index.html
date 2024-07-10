@@ -813,6 +813,19 @@
             })
             .then(response => response.json())
             .then(data => {
+                console.log("Received data:", data);  // Log the received data
+
+                if (!data || !data.simulations || !Array.isArray(data.simulations) || data.simulations.length === 0) {
+                    console.error("Invalid data structure received");
+                    return;
+                }
+
+                const chartContainer = document.getElementById('tokenomics-chart');
+                if (!chartContainer) {
+                    console.error("Chart container not found");
+                    return;
+                }
+
                 const traces = [
                     {
                         x: data.simulations[0].map(d => d.month),
@@ -834,6 +847,8 @@
                     }
                 ];
 
+                console.log("Traces:", traces);  // Log the created traces
+
                 const layout = {
                     ...plotlyLayout,
                     title: 'Tokenomics Simulation Results',
@@ -841,7 +856,12 @@
                     yaxis: { title: 'Value' }
                 };
 
-                Plotly.newPlot('tokenomics-chart', traces, layout);
+                Plotly.newPlot('tokenomics-chart', traces, layout)
+                    .then(() => console.log("Chart plotted successfully"))
+                    .catch(err => console.error("Error plotting chart:", err));
+            })
+            .catch(error => {
+                console.error('Error running simulation:', error);
             });
         }
 

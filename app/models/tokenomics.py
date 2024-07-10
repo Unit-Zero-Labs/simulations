@@ -98,7 +98,7 @@ class TokenomicsSimulation:
                     monthly_burn_rate = abs(net_income)
                     runway_months = total_reserves_value / monthly_burn_rate if monthly_burn_rate > 0 else float('inf')
                 else:
-                    runway_months = net_income + 1000
+                    runway_months = net_income + 10000
 
 
                 cumulative_revenue += total_revenue

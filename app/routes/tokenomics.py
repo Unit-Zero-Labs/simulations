@@ -23,7 +23,7 @@ def run_tokenomics_simulation():
         vesting_step_up=float(data['vesting_step_up']),
         initial_tvl=float(data['initial_tvl']),
         initial_borrow=float(data['initial_borrow']),
-        initial_token_circulating=float(data['token_circulating']),
+        initial_token_circulating=float(data['initial_token_circulating']),
         monthly_liquidations=float(data['monthly_liquidations']),
         monthly_sequencer_fees=float(data['monthly_sequencer_fees']),
         revenue_distribution_percentage=float(data['revenue_distribution_percentage']),

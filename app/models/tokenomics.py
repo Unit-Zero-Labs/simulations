@@ -6,7 +6,7 @@ class TokenomicsSimulation:
         for key, value in kwargs.items():
             setattr(self, key, value)
         
-        required_params = ['initial_reserves', 'token_price', 'protocol_revenue_share', 'target_utilization']
+        required_params = ['initial_reserves', 'token_price', 'protocol_revenue_share', 'target_utilization','total_tokens_emitted']
         for param in required_params:
             if param not in kwargs:
                 raise ValueError(f"'{param}' is a required parameter")
@@ -15,7 +15,8 @@ class TokenomicsSimulation:
         self.token_price = kwargs['token_price']
         self.protocol_revenue_share = kwargs['protocol_revenue_share']
         self.target_utilization = kwargs['target_utilization']
-        
+        self.total_token_emitted = kwargs['total_token_emitted']
+
     def calculate_interest_rate(self, utilization):
         if utilization <= self.kink:
             return self.base_rate + (utilization / self.kink) * self.multiplier

@@ -246,32 +246,36 @@
         <div id="basic-inputs">
             <h3>Protocol Metrics</h3>
             <div class="input-container">
-                <input type="number" id="tvl" placeholder=" ">
-                <label for="tvl">TVL ($)</label>
+                <input type="number" id="initial_tvl" placeholder=" ">
+                <label for="initial_tvl">Initial TVL ($)</label>
             </div>
             <div class="input-container">
-                <input type="number" id="borrow" placeholder=" ">
-                <label for="borrow">Borrow ($)</label>
+                <input type="number" id="initial_borrow" placeholder=" ">
+                <label for="initial_borrow">Initial Borrow ($)</label>
             </div>
             <div class="input-container">
-                <input type="number" id="cash" placeholder=" ">
-                <label for="cash">Cash ($)</label>
+                <input type="number" id="initial_token_circulating" placeholder=" ">
+                <label for="initial_token_circulating">Tokens Circulating</label>
             </div>
             <div class="input-container">
-                <input type="number" id="utilization" step="0.01" placeholder=" ">
-                <label for="utilization">Utilization (%)</label>
+                <input type="number" id="total_token_emitted" placeholder=" ">
+                <label for="total_token_emitted">Total Tokens To be Emitted</label>
             </div>
             <div class="input-container">
-                <input type="number" id="borrow-interest" step="0.01" placeholder=" ">
-                <label for="borrow-interest">Borrow Interest (%)</label>
+                <input type="number" id="initial_reserves" placeholder=" ">
+                <label for="initial_reserves">Initial Reserves ($)</label>
             </div>
             <div class="input-container">
-                <input type="number" id="supply-interest" step="0.01" placeholder=" ">
-                <label for="supply-interest">Supply Interest Rate (%)</label>
+                <input type="number" id="token_price" step="0.0001" placeholder=" ">
+                <label for="token_price">Initial Token Price ($)</label>
             </div>
             <div class="input-container">
-                <input type="number" id="token-circulating" placeholder=" ">
-                <label for="token-circulating">Total Token Circulating</label>
+                <input type="number" id="protocol_revenue_share" step="0.01" placeholder=" ">
+                <label for="protocol_revenue_share">Protocol Revenue Share</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="target_utilization" step="0.01" placeholder=" ">
+                <label for="target_utilization">Target Utilization</label>
             </div>
         </div>
 
@@ -287,22 +291,15 @@
         <button onclick="toggleAdvancedFeatures()">Advanced Features</button>
     
         <div id="advanced-inputs" style="display: none;">
-            <div class="input-container">
-                <input type="number" id="initial_reserves" placeholder=" ">
-                <label for="initial_reserves">Initial Reserves</label>
-            </div>
-            <div class="input-container">
-                <input type="number" id="protocol_revenue_share" step="0.01" placeholder=" ">
-                <label for="protocol_revenue_share">Protocol Revenue Share</label>
-            </div>
-            <div class="input-container">
-                <input type="number" id="target_utilization" step="0.01" placeholder=" ">
-                <label for="target_utilization">Target Utilization</label>
-            </div>
-            <div class="input-container">
-                <input type="number" id="total_token_emitted" placeholder=" ">
-                <label for="total_token_emitted">Total Tokens Emitted</label>
             
+            <div class="input-container">
+                <input type="number" id="num_simulations" placeholder=" ">
+                <label for="num_simulations">Number of Simulations</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="num_months" placeholder=" ">
+                <label for="num_months">Number of Months</label>
+            </div>
             <div class="input-container">
                 <input type="number" id="mom_tvl_growth" step="0.001" placeholder=" ">
                 <label for="mom_tvl_growth">MoM TVL Growth</label>
@@ -391,14 +388,7 @@
                 <input type="number" id="jump_multiplier" step="0.01" placeholder=" ">
                 <label for="jump_multiplier">Jump Multiplier</label>
             </div>
-            <div class="input-container">
-                <input type="number" id="num_simulations" placeholder=" ">
-                <label for="num_simulations">Number of Simulations</label>
-            </div>
-            <div class="input-container">
-                <input type="number" id="num_months" placeholder=" ">
-                <label for="num_months">Number of Months</label>
-            </div>
+            
             
         
     </div>
@@ -664,6 +654,8 @@
         }
         const scenarios = {
             bear: {
+                num_simulations: 100,
+                num_months: 12,
                 mom_tvl_growth: 0.01,
                 mom_borrow_growth: 0.02,
                 base_monthly_emissions_rate: 0.005,
@@ -688,6 +680,8 @@
                 jump_multiplier: 3.5
             },
             base: {
+                num_simulations: 100,
+                num_months: 12,
                 mom_tvl_growth: 0.025,
                 mom_borrow_growth: 0.05,
                 base_monthly_emissions_rate: 0.0075,
@@ -712,6 +706,8 @@
                 jump_multiplier: 4.0
             },
             bull: {
+                num_simulations: 100,
+                num_months: 12,
                 mom_tvl_growth: 0.04,
                 mom_borrow_growth: 0.08,
                 base_monthly_emissions_rate: 0.01,
@@ -750,13 +746,14 @@
         function updateBasicInputs(scenario) {
             const growth = scenario === 'bear' ? 1.1 : (scenario === 'base' ? 1.25 : 1.4);
             
-            document.getElementById('tvl').value = (266290000 * growth).toFixed(0);
-            document.getElementById('borrow').value = (28680000 * growth).toFixed(0);
-            document.getElementById('cash').value = (237610000 * growth).toFixed(0);
-            document.getElementById('utilization').value = (10.77 * (scenario === 'bear' ? 0.9 : (scenario === 'base' ? 1 : 1.1))).toFixed(2);
-            document.getElementById('borrow-interest').value = (2 * (scenario === 'bear' ? 0.9 : (scenario === 'base' ? 1 : 1.1))).toFixed(2);
-            document.getElementById('supply-interest').value = (0.15 * (scenario === 'bear' ? 0.9 : (scenario === 'base' ? 1 : 1.1))).toFixed(2);
-            document.getElementById('token-circulating').value = (40000000 * (scenario === 'bear' ? 1.1 : (scenario === 'base' ? 1.25 : 1.4))).toFixed(0);
+            document.getElementById('initial_tvl').value = (266290000 * growth).toFixed(0);
+            document.getElementById('initial_borrow').value = (28680000 * growth).toFixed(0);
+            document.getElementById('initial_token_circulating').value = (40000000 * growth).toFixed(0);
+            document.getElementById('initial_reserves').value = (1000000 * growth).toFixed(0);
+            document.getElementById('token_price').value = (0.1 * (scenario === 'bear' ? 0.9 : (scenario === 'base' ? 1 : 1.1))).toFixed(4);
+            document.getElementById('protocol_revenue_share').value = (0.2 * (scenario === 'bear' ? 0.9 : (scenario === 'base' ? 1 : 1.1))).toFixed(2);
+            document.getElementById('target_utilization').value = (0.8 * (scenario === 'bear' ? 0.9 : (scenario === 'base' ? 1 : 1.1))).toFixed(2);
+            document.getElementById('total_token_emitted').value = 300000000;  // This remains constant across scenarios
         }
 
         function toggleAdvancedFeatures() {
@@ -766,22 +763,21 @@
 
         function runTokenomicsSimulation() {
             const basicData = {
-                tvl: parseFloat(document.getElementById('tvl').value),
-                borrow: parseFloat(document.getElementById('borrow').value),
-                cash: parseFloat(document.getElementById('cash').value),
-                utilization: parseFloat(document.getElementById('utilization').value) / 100,
-                borrow_interest: parseFloat(document.getElementById('borrow-interest').value) / 100,
-                supply_interest: parseFloat(document.getElementById('supply-interest').value) / 100,
-                token_circulating: parseFloat(document.getElementById('token-circulating').value)
+                total_token_emitted: parseFloat(document.getElementById('total_token_emitted').value),
+                initial_tvl: parseFloat(document.getElementById('initial_tvl').value),
+                initial_borrow: parseFloat(document.getElementById('initial_borrow').value),
+                initial_token_circulating: parseFloat(document.getElementById('initial_token_circulating').value),
+                initial_reserves: parseFloat(document.getElementById('initial_reserves').value),
+                token_price: parseFloat(document.getElementById('token_price').value),
+                protocol_revenue_share: parseFloat(document.getElementById('protocol_revenue_share').value),
+                target_utilization: parseFloat(document.getElementById('target_utilization').value)
             };
 
             const advancedData = {
-                total_token_emitted: 300000000, // constant
                 mom_tvl_growth: parseFloat(document.getElementById('mom_tvl_growth').value),
                 mom_borrow_growth: parseFloat(document.getElementById('mom_borrow_growth').value),
                 base_monthly_emissions_rate: parseFloat(document.getElementById('base_monthly_emissions_rate').value),
                 emissions_step_up: parseFloat(document.getElementById('emissions_step_up').value),
-                token_price: parseFloat(document.getElementById('token_price').value),
                 total_team_allocation: parseFloat(document.getElementById('total_team_allocation').value),
                 cliff: parseInt(document.getElementById('cliff').value),
                 vesting_months: parseInt(document.getElementById('vesting_months').value),
@@ -789,22 +785,12 @@
                 vesting_step_up: parseFloat(document.getElementById('vesting_step_up').value),
                 monthly_liquidations: parseFloat(document.getElementById('monthly_liquidations').value),
                 monthly_sequencer_fees: parseFloat(document.getElementById('monthly_sequencer_fees').value),
-                revenue_distribution_percentage: parseFloat(document.getElementById('revenue_distribution_percentage').value),
-                lender_percentage: parseFloat(document.getElementById('lender_percentage').value),
-                reserve_fee: parseFloat(document.getElementById('reserve_fee').value),
-                admin_fee: parseFloat(document.getElementById('admin_fee').value),
-                protocol_fee: parseFloat(document.getElementById('protocol_fee').value),
-                liquidation_fee: parseFloat(document.getElementById('liquidation_fee').value),
                 base_rate: parseFloat(document.getElementById('base_rate').value),
                 multiplier: parseFloat(document.getElementById('multiplier').value),
                 kink: parseFloat(document.getElementById('kink').value),
                 jump_multiplier: parseFloat(document.getElementById('jump_multiplier').value),
                 num_simulations: parseInt(document.getElementById('num_simulations').value),
-                num_months: parseInt(document.getElementById('num_months').value),
-                initial_reserves: parseFloat(document.getElementById('initial_reserves').value),
-                protocol_revenue_share: parseFloat(document.getElementById('protocol_revenue_share').value),
-                target_utilization: parseFloat(document.getElementById('target_utilization').value)
-    
+                num_months: parseInt(document.getElementById('num_months').value)
             };
 
             const data = { ...basicData, ...advancedData };

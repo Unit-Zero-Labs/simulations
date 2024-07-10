@@ -64,7 +64,7 @@ class TokenomicsSimulation:
                 if net_income < 0:
                     runway_months = reserves / abs(net_income)
                 else:
-                    runway_months = float('inf')  # Infinite runway if profitable
+                    runway_months = 999  
                 runway.append(runway_months)
 
                 monthly_data.append({

@@ -281,7 +281,9 @@
             <button class="scenario-button" onclick="setScenario('bull')">Bull</button>
         </div>
         <button onclick="runTokenomicsSimulation()">Run Simulation</button>
-    
+
+        <div id="tokenomics-chart"></div>
+
         <button onclick="toggleAdvancedFeatures()">Advanced Features</button>
     
         <div id="advanced-inputs" style="display: none;">
@@ -396,7 +398,7 @@
                 <label for="num_months">Number of Months</label>
             </div>
             
-        <div id="tokenomics-chart"></div>
+        
     </div>
 
     <script>
@@ -813,7 +815,7 @@
             })
             .then(response => response.json())
             .then(data => {
-                console.log("Received data:", data);  // Log the received data
+                console.log("Received data:", data);  // log received data
 
                 if (!data || !data.simulations || !Array.isArray(data.simulations) || data.simulations.length === 0) {
                     console.error("Invalid data structure received");
@@ -825,6 +827,7 @@
                     console.error("Chart container not found");
                     return;
                 }
+                chartContainer.style.display = 'block';
 
                 const traces = [
                     {
@@ -847,11 +850,11 @@
                     }
                 ];
 
-                console.log("Traces:", traces);  // Log the created traces
+                console.log("Traces:", traces);  // log traces
 
                 const layout = {
                     ...plotlyLayout,
-                    title: 'Tokenomics Simulation Results',
+                    title: 'Tokenomics Builder Sim Results',
                     xaxis: { title: 'Months' },
                     yaxis: { title: 'Value' }
                 };
@@ -864,7 +867,11 @@
                 console.error('Error running simulation:', error);
             });
         }
-
+        function toggleAdvancedFeatures() {
+            const advancedInputs = document.getElementById('advanced-inputs');
+            advancedInputs.style.display = advancedInputs.style.display === 'none' ? 'block' : 'none';
+        
+        }
     </script>
     
 </body>

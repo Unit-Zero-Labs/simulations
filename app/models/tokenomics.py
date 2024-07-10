@@ -32,8 +32,8 @@ class TokenomicsSimulation:
             token_circulating = self.initial_token_circulating
             team_tokens_vested = 0
             cumulative_revenue = 0
-            token_reserves = self.initial_reserves / self.token_price
-            stable_reserves = self.initial_reserves
+            token_reserves = self.initial_reserves / (2 * self.token_price)  # Split initial reserves
+            stable_reserves = self.initial_reserves / 2  # Split initial reserves
             monthly_data = []
 
             for month in range(num_months):
@@ -80,11 +80,26 @@ class TokenomicsSimulation:
                 self.token_price *= (1 + (net_income / (token_circulating * self.token_price)) * 0.1)
 
                 # calc runway
-                if net_income < 0:
-                    token_burn_rate = abs(net_income) / self.token_price
-                    runway_months = token_reserves / token_burn_rate if token_burn_rate > 0 else 999
+                if net_income > 0:
+                    token_reserves += (net_income / 2) / self.token_price
+                    stable_reserves += net_income / 2
                 else:
-                    runway_months = 999
+                    # if net income is negative, draw from both reserves proportionally
+                    total_reserves_value = (token_reserves * self.token_price) + stable_reserves
+                    token_draw_ratio = (token_reserves * self.token_price) / total_reserves_value
+                    token_reserves += (net_income * token_draw_ratio) / self.token_price
+                    stable_reserves += net_income * (1 - token_draw_ratio)
+                token_reserves = max(0, token_reserves)
+                stable_reserves = max(0, stable_reserves)
+
+                # now get runway based on total reserves
+                total_reserves_value = (token_reserves * self.token_price) + stable_reserves
+                if net_income < 0:
+                    monthly_burn_rate = abs(net_income)
+                    runway_months = total_reserves_value / monthly_burn_rate if monthly_burn_rate > 0 else float('inf')
+                else:
+                    runway_months = 999999999
+
 
                 cumulative_revenue += total_revenue
 

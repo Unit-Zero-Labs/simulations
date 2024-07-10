@@ -21,9 +21,9 @@ def run_tokenomics_simulation():
         vesting_months=int(data['vesting_months']),
         base_vesting_per_month=float(data['base_vesting_per_month']),
         vesting_step_up=float(data['vesting_step_up']),
-        initial_tvl=float(data['tvl']), 
-        initial_borrow=float(data['borrow']), 
-        initial_token_circulating=float(data['token_circulating']), 
+        initial_tvl=float(data['tvl']),
+        initial_borrow=float(data['borrow']),
+        initial_token_circulating=float(data['token_circulating']),
         monthly_liquidations=float(data['monthly_liquidations']),
         monthly_sequencer_fees=float(data['monthly_sequencer_fees']),
         revenue_distribution_percentage=float(data['revenue_distribution_percentage']),
@@ -36,8 +36,9 @@ def run_tokenomics_simulation():
         multiplier=float(data['multiplier']),
         kink=float(data['kink']),
         jump_multiplier=float(data['jump_multiplier']),
-        initial_reserves=float(data.get('initial_reserves', 1000000)),  
-        monthly_expenses=float(data.get('monthly_expenses', 100000))  
+        initial_reserves=float(data['initial_reserves']),
+        protocol_revenue_share=float(data['protocol_revenue_share']),
+        target_utilization=float(data['target_utilization'])
     )
 
     num_simulations = int(data['num_simulations'])

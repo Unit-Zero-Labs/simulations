@@ -287,20 +287,22 @@
         <button onclick="toggleAdvancedFeatures()">Advanced Features</button>
     
         <div id="advanced-inputs" style="display: none;">
-
-
             <div class="input-container">
-                <input type="number" id="total-token-emitted" placeholder=" ">
-                <label for="total-token-emitted">Total Token Emitted</label>
+                <input type="number" id="initial_reserves" placeholder=" ">
+                <label for="initial_reserves">Initial Reserves</label>
             </div>
             <div class="input-container">
-                <input type="number" id="base-monthly-emissions-rate" step="0.0001" placeholder=" ">
-                <label for="base-monthly-emissions-rate">Base Monthly Emissions Rate</label>
+                <input type="number" id="protocol_revenue_share" step="0.01" placeholder=" ">
+                <label for="protocol_revenue_share">Protocol Revenue Share</label>
             </div>
             <div class="input-container">
-                <input type="number" id="emissions-step-up" step="0.01" placeholder=" ">
-                <label for="emissions-step-up">Emissions Step Up</label>
+                <input type="number" id="target_utilization" step="0.01" placeholder=" ">
+                <label for="target_utilization">Target Utilization</label>
             </div>
+            <div class="input-container">
+                <input type="number" id="total_token_emitted" placeholder=" ">
+                <label for="total_token_emitted">Total Tokens Emitted</label>
+            
             <div class="input-container">
                 <input type="number" id="mom_tvl_growth" step="0.001" placeholder=" ">
                 <label for="mom_tvl_growth">MoM TVL Growth</label>
@@ -770,9 +772,7 @@
                 utilization: parseFloat(document.getElementById('utilization').value) / 100,
                 borrow_interest: parseFloat(document.getElementById('borrow-interest').value) / 100,
                 supply_interest: parseFloat(document.getElementById('supply-interest').value) / 100,
-                token_circulating: parseFloat(document.getElementById('token-circulating').value),
-                initial_reserves: 1000000,  
-                monthly_expenses: 100000  
+                token_circulating: parseFloat(document.getElementById('token-circulating').value)
             };
 
             const advancedData = {
@@ -800,7 +800,11 @@
                 kink: parseFloat(document.getElementById('kink').value),
                 jump_multiplier: parseFloat(document.getElementById('jump_multiplier').value),
                 num_simulations: parseInt(document.getElementById('num_simulations').value),
-                num_months: parseInt(document.getElementById('num_months').value)
+                num_months: parseInt(document.getElementById('num_months').value),
+                initial_reserves: parseFloat(document.getElementById('initial_reserves').value),
+                protocol_revenue_share: parseFloat(document.getElementById('protocol_revenue_share').value),
+                target_utilization: parseFloat(document.getElementById('target_utilization').value)
+    
             };
 
             const data = { ...basicData, ...advancedData };

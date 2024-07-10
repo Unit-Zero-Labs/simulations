@@ -5,9 +5,17 @@ class TokenomicsSimulation:
     def __init__(self, **kwargs):
         for key, value in kwargs.items():
             setattr(self, key, value)
-        self.initial_reserves = kwargs.get('initial_reserves', 1000000)  
-        self.monthly_expenses = kwargs.get('monthly_expenses', 100000)  
-
+        
+        required_params = ['initial_reserves', 'token_price', 'protocol_revenue_share', 'target_utilization']
+        for param in required_params:
+            if param not in kwargs:
+                raise ValueError(f"'{param}' is a required parameter")
+        
+        self.initial_reserves = kwargs['initial_reserves']
+        self.token_price = kwargs['token_price']
+        self.protocol_revenue_share = kwargs['protocol_revenue_share']
+        self.target_utilization = kwargs['target_utilization']
+        
     def calculate_interest_rate(self, utilization):
         if utilization <= self.kink:
             return self.base_rate + (utilization / self.kink) * self.multiplier
@@ -23,49 +31,61 @@ class TokenomicsSimulation:
             token_circulating = self.initial_token_circulating
             team_tokens_vested = 0
             cumulative_revenue = 0
-            reserves = self.initial_reserves
-            runway = []
+            token_reserves = self.initial_reserves / self.token_price
+            stable_reserves = self.initial_reserves
             monthly_data = []
 
             for month in range(num_months):
-                # sim TVL and borrow growth, modeled as normal distributions
+                # sim TVL and borrow growth
                 tvl_growth = np.random.normal(self.mom_tvl_growth, self.mom_tvl_growth / 2)
                 borrow_growth = np.random.normal(self.mom_borrow_growth, self.mom_borrow_growth / 2)
 
                 tvl *= (1 + tvl_growth)
                 borrow *= (1 + borrow_growth)
-                # interest rate is a calc of utilization
+
                 utilization = borrow / tvl
                 interest_rate = self.calculate_interest_rate(utilization)
 
-                # revenue from borrow interest, liqs, and sequencer fees
+                # calc revenue
                 borrow_revenue = borrow * interest_rate / 12
                 liquidation_revenue = tvl * self.monthly_liquidations
                 sequencer_revenue = tvl * self.monthly_sequencer_fees
                 total_revenue = borrow_revenue + liquidation_revenue + sequencer_revenue
 
+                # rev distribution
+                protocol_revenue = total_revenue * self.protocol_revenue_share
+                token_holder_revenue = total_revenue - protocol_revenue
+
                 # calc token emissions
-                emissions_rate = self.base_monthly_emissions_rate * (1 + self.emissions_step_up * (borrow / self.initial_borrow - 1))
+                emissions_rate = self.base_monthly_emissions_rate * (1 + self.emissions_step_up * (utilization - self.target_utilization))
                 token_emissions = self.total_token_emitted * emissions_rate
 
-                # team vesting
+                # Team vesting
                 if month >= self.cliff:
-                    vesting_rate = self.base_vesting_per_month * (1 + self.vesting_step_up * (borrow / self.initial_borrow - 1))
+                    vesting_rate = self.base_vesting_per_month * (1 + self.vesting_step_up * (utilization - self.target_utilization))
                     team_tokens_vested += self.total_team_allocation * vesting_rate
                 
-                token_circulating += token_emissions + (self.total_team_allocation * vesting_rate if month >= self.cliff else 0)
+                token_circulating += token_emissions + (team_tokens_vested if month >= self.cliff else 0)
 
-                # cumulative revenue
-                cumulative_revenue += total_revenue
-                net_income = total_revenue - self.monthly_expenses
-                reserves += net_income
+                # calc expenses and net income
+                expenses = (token_emissions + team_tokens_vested) * self.token_price
+                net_income = protocol_revenue - expenses
 
-                # calc runway (in months)
+                # update reserves
+                token_reserves += net_income / self.token_price
+                stable_reserves += net_income
+
+                # update token price 
+                self.token_price *= (1 + (net_income / (token_circulating * self.token_price)) * 0.1)
+
+                # calc runway
                 if net_income < 0:
-                    runway_months = reserves / abs(net_income)
+                    token_burn_rate = abs(net_income) / self.token_price
+                    runway_months = token_reserves / token_burn_rate if token_burn_rate > 0 else 999
                 else:
-                    runway_months = 999  
-                runway.append(runway_months)
+                    runway_months = 999
+
+                cumulative_revenue += total_revenue
 
                 monthly_data.append({
                     'month': month + 1,
@@ -74,13 +94,18 @@ class TokenomicsSimulation:
                     'utilization': utilization,
                     'interest_rate': interest_rate,
                     'total_revenue': total_revenue,
+                    'protocol_revenue': protocol_revenue,
+                    'token_holder_revenue': token_holder_revenue,
                     'net_income': net_income,
-                    'reserves': reserves,
+                    'token_reserves': token_reserves,
+                    'stable_reserves': stable_reserves,
                     'runway': runway_months,
                     'token_emissions': token_emissions,
                     'token_circulating': token_circulating,
                     'team_tokens_vested': team_tokens_vested,
-                    'cumulative_revenue': cumulative_revenue
+                    'cumulative_revenue': cumulative_revenue,
+                    'token_price': self.token_price,
+                    'expenses': expenses
                 })
 
             results.append(monthly_data)
@@ -94,12 +119,16 @@ class TokenomicsSimulation:
             'borrow': {p: np.percentile([d['borrow'] for d in final_month_data], p) for p in percentiles},
             'utilization': {p: np.percentile([d['utilization'] for d in final_month_data], p) for p in percentiles},
             'total_revenue': {p: np.percentile([d['total_revenue'] for d in final_month_data], p) for p in percentiles},
+            'protocol_revenue': {p: np.percentile([d['protocol_revenue'] for d in final_month_data], p) for p in percentiles},
+            'token_holder_revenue': {p: np.percentile([d['token_holder_revenue'] for d in final_month_data], p) for p in percentiles},
+            'net_income': {p: np.percentile([d['net_income'] for d in final_month_data], p) for p in percentiles},
+            'token_reserves': {p: np.percentile([d['token_reserves'] for d in final_month_data], p) for p in percentiles},
+            'stable_reserves': {p: np.percentile([d['stable_reserves'] for d in final_month_data], p) for p in percentiles},
+            'runway': {p: np.percentile([d['runway'] for d in final_month_data], p) for p in percentiles},
             'token_circulating': {p: np.percentile([d['token_circulating'] for d in final_month_data], p) for p in percentiles},
             'cumulative_revenue': {p: np.percentile([d['cumulative_revenue'] for d in final_month_data], p) for p in percentiles},
-            'runway': {p: np.percentile([d['runway'] for d in final_month_data], p) for p in percentiles},
-            'net_income': {p: np.percentile([d['net_income'] for d in final_month_data], p) for p in percentiles}
-
-        
+            'token_price': {p: np.percentile([d['token_price'] for d in final_month_data], p) for p in percentiles},
+            'expenses': {p: np.percentile([d['expenses'] for d in final_month_data], p) for p in percentiles}
         }
 
         return {

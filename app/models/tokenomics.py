@@ -32,8 +32,7 @@ class TokenomicsSimulation:
             token_circulating = self.initial_token_circulating
             team_tokens_vested = 0
             cumulative_revenue = 0
-            token_reserves = self.initial_reserves / (2 * self.token_price)  # Split initial reserves
-            stable_reserves = self.initial_reserves / 2  # Split initial reserves
+            token_reserves = self.initial_reserves / (2 * self.token_price)  
             monthly_data = []
 
             for month in range(num_months):
@@ -74,7 +73,6 @@ class TokenomicsSimulation:
 
                 # update reserves
                 token_reserves += net_income / self.token_price
-                stable_reserves += net_income
 
                 # update token price 
                 self.token_price *= (1 + (net_income / (token_circulating * self.token_price)) * 0.1)
@@ -82,18 +80,15 @@ class TokenomicsSimulation:
                 # calc runway
                 if net_income > 0:
                     token_reserves += (net_income / 2) / self.token_price
-                    stable_reserves += net_income / 2
                 else:
                     # if net income is negative, draw from both reserves proportionally
-                    total_reserves_value = (token_reserves * self.token_price) + stable_reserves
+                    total_reserves_value = (token_reserves * self.token_price)
                     token_draw_ratio = (token_reserves * self.token_price) / total_reserves_value
                     token_reserves += (net_income * token_draw_ratio) / self.token_price
-                    stable_reserves += net_income * (1 - token_draw_ratio)
                 token_reserves = max(0, token_reserves)
-                stable_reserves = max(0, stable_reserves)
 
                 # now get runway based on total reserves
-                total_reserves_value = (token_reserves * self.token_price) + stable_reserves
+                total_reserves_value = (token_reserves * self.token_price) 
                 if net_income < 0:
                     monthly_burn_rate = abs(net_income)
                     runway_months = total_reserves_value / monthly_burn_rate if monthly_burn_rate > 0 else float('inf')
@@ -114,7 +109,6 @@ class TokenomicsSimulation:
                     'token_holder_revenue': token_holder_revenue,
                     'net_income': net_income,
                     'token_reserves': token_reserves,
-                    'stable_reserves': stable_reserves,
                     'runway': runway_months,
                     'token_emissions': token_emissions,
                     'token_circulating': token_circulating,
@@ -139,7 +133,6 @@ class TokenomicsSimulation:
             'token_holder_revenue': {p: np.percentile([d['token_holder_revenue'] for d in final_month_data], p) for p in percentiles},
             'net_income': {p: np.percentile([d['net_income'] for d in final_month_data], p) for p in percentiles},
             'token_reserves': {p: np.percentile([d['token_reserves'] for d in final_month_data], p) for p in percentiles},
-            'stable_reserves': {p: np.percentile([d['stable_reserves'] for d in final_month_data], p) for p in percentiles},
             'runway': {p: np.percentile([d['runway'] for d in final_month_data], p) for p in percentiles},
             'token_circulating': {p: np.percentile([d['token_circulating'] for d in final_month_data], p) for p in percentiles},
             'cumulative_revenue': {p: np.percentile([d['cumulative_revenue'] for d in final_month_data], p) for p in percentiles},

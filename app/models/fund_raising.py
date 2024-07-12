@@ -49,7 +49,7 @@ class FundRaising:
                 if current_date <= vesting_end:
                     vesting_data.loc[current_date, row['allocation']] = daily_vesting
         
-        # Add Airdrop #2 data
+        # add airdrop #2 data
         airdrop_dates = [self.airdrop_module['date1'], self.airdrop_module['date2'], self.airdrop_module['date3']]
         airdrop_amounts = [self.airdrop_module['amount1'], self.airdrop_module['amount2'], self.airdrop_module['amount3']]
         for date, amount in zip(airdrop_dates, airdrop_amounts):

@@ -44,14 +44,22 @@
             text-align: center;
             color: var(--highlight);
         }
+        #tab-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
         .tab-button {
+            flex: 1;
+            margin: 0 5px;
+            font-size: 14px;
+            padding: 8px 12px;
             background-color: var(--accent);
             border: none;
             outline: none;
             cursor: pointer;
-            padding: 10px 20px;
             transition: 0.3s;
-            font-size: 17px;
             color: var(--background);
             border-radius: 5px 5px 0 0;
         }
@@ -155,9 +163,7 @@
         <h1>Simulation Lab</h1>
     </div>
     
-    <div id="tabs">
-
-
+    <div id="tab-container">
         <button class="tab-button active" onclick="openTab(event, 'lending')">Lending Simulation</button>
         <button class="tab-button" onclick="openTab(event, 'stable')">Stable Pool Simulation</button>
         <button class="tab-button" onclick="openTab(event, 'non-stable')">Non-Stable Pool Simulation</button>
@@ -363,6 +369,7 @@
                 <input type="number" id="jump_multiplier" step="0.01" placeholder=" ">
                 <label for="jump_multiplier">Jump Multiplier</label>
             </div>
+    </div>
 
     <div id="fund-raising" class="tab-content">
         <h2>Fund Raising</h2>

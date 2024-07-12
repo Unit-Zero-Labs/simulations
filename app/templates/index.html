@@ -162,6 +162,7 @@
         <button class="tab-button" onclick="openTab(event, 'stable')">Stable Pool Simulation</button>
         <button class="tab-button" onclick="openTab(event, 'non-stable')">Non-Stable Pool Simulation</button>
         <button class="tab-button" onclick="openTab(event, 'tokenomics')">Tokenomics Builder</button>
+        <button class="tab-button" onclick="openTab(event, 'fund-raising')">Fund Raising</button>
     </div>
 
     <div id="lending" class="tab-content" style="display:block;">
@@ -241,6 +242,8 @@
         <button onclick="runNonStablePoolSimulation()">Run Simulation</button>
         <div id="non-stable-chart"></div>
     </div>
+
+<!-- TOKENOMICS BUILDER TAB -->
 
     <div id="tokenomics" class="tab-content">
         <h2>Tokenomics Builder</h2>
@@ -361,11 +364,276 @@
                 <input type="number" id="jump_multiplier" step="0.01" placeholder=" ">
                 <label for="jump_multiplier">Jump Multiplier</label>
             </div>
-            
-            
+
+<!-- FUND RAISING TAB -->
+
+    <div id="fund-raising" class="tab-content">
+        <h2>Fund Raising</h2>
+        <div id="fund-raising-inputs">
+            <h3>Basic Token Parameters</h3>
+            <div class="input-container">
+                <input type="text" id="supply-type" value="Fixed" readonly>
+                <label for="supply-type">Supply Type</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="initial-total-supply" placeholder=" ">
+                <label for="initial-total-supply">Initial Total Supply of Tokens</label>
+            </div>
+            <div class="input-container">
+                <input type="date" id="launch-date" placeholder=" ">
+                <label for="launch-date">Launch Date</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="public-sale-percentage" step="0.01" placeholder=" ">
+                <label for="public-sale-percentage">% Public Sale of Supply (up to)</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="public-sale-valuation" placeholder=" ">
+                <label for="public-sale-valuation">Public Sale Valuation ($)</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="equity-owned" step="0.01" placeholder=" ">
+                <label for="equity-owned">Equity Owned by External Shareholders (%)</label>
+            </div>
+
+            <h3>Initial Token Allocation & Vesting Schedule</h3>
+            <table id="allocation-table">
+                <thead>
+                    <tr>
+                        <th>Allocation</th>
+                        <th>Percentage</th>
+                        <th>Tokens</th>
+                        <th>TGE Unlock %</th>
+                        <th>Cliff (months)</th>
+                        <th>Vesting Period (months)</th>
+                        <th>Monthly Vesting %</th>
+                        <th>Monthly Vesting Tokens</th>
+                        <th>Tokens at TGE</th>
+                        <th>Discount</th>
+                        <th>Vesting Start</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Strategic</td>
+                        <td><input type="number" class="percentage" step="0.01"></td>
+                        <td class="tokens"></td>
+                        <td><input type="number" class="tge-unlock" step="0.01"></td>
+                        <td><input type="number" class="cliff"></td>
+                        <td><input type="number" class="vesting-period"></td>
+                        <td class="monthly-vesting-percentage"></td>
+                        <td class="monthly-vesting-tokens"></td>
+                        <td class="tokens-at-tge"></td>
+                        <td><input type="number" class="discount" step="0.01"></td>
+                        <td><input type="month" class="vesting-start"></td>
+                    </tr>
+                    <tr>
+                        <td>Seed</td>
+                        <td><input type="number" class="percentage" step="0.01"></td>
+                        <td class="tokens"></td>
+                        <td><input type="number" class="tge-unlock" step="0.01"></td>
+                        <td><input type="number" class="cliff"></td>
+                        <td><input type="number" class="vesting-period"></td>
+                        <td class="monthly-vesting-percentage"></td>
+                        <td class="monthly-vesting-tokens"></td>
+                        <td class="tokens-at-tge"></td>
+                        <td><input type="number" class="discount" step="0.01"></td>
+                        <td><input type="month" class="vesting-start"></td>
+                    </tr>
+                    <tr>
+                        <td>Public Sale</td>
+                        <td><input type="number" class="percentage" step="0.01"></td>
+                        <td class="tokens"></td>
+                        <td><input type="number" class="tge-unlock" step="0.01"></td>
+                        <td><input type="number" class="cliff"></td>
+                        <td><input type="number" class="vesting-period"></td>
+                        <td class="monthly-vesting-percentage"></td>
+                        <td class="monthly-vesting-tokens"></td>
+                        <td class="tokens-at-tge"></td>
+                        <td><input type="number" class="discount" step="0.01"></td>
+                        <td><input type="month" class="vesting-start"></td>
+                    </tr>
+                    <tr>
+                        <td>Founders / Team</td>
+                        <td><input type="number" class="percentage" step="0.01"></td>
+                        <td class="tokens"></td>
+                        <td><input type="number" class="tge-unlock" step="0.01"></td>
+                        <td><input type="number" class="cliff"></td>
+                        <td><input type="number" class="vesting-period"></td>
+                        <td class="monthly-vesting-percentage"></td>
+                        <td class="monthly-vesting-tokens"></td>
+                        <td class="tokens-at-tge"></td>
+                        <td><input type="number" class="discount" step="0.01"></td>
+                        <td><input type="month" class="vesting-start"></td>
+                    </tr>
+                    <tr>
+                        <td>Advisors</td>
+                        <td><input type="number" class="percentage" step="0.01"></td>
+                        <td class="tokens"></td>
+                        <td><input type="number" class="tge-unlock" step="0.01"></td>
+                        <td><input type="number" class="cliff"></td>
+                        <td><input type="number" class="vesting-period"></td>
+                        <td class="monthly-vesting-percentage"></td>
+                        <td class="monthly-vesting-tokens"></td>
+                        <td class="tokens-at-tge"></td>
+                        <td><input type="number" class="discount" step="0.01"></td>
+                        <td><input type="month" class="vesting-start"></td>
+                    </tr>
+                    <tr>
+                        <td>Strategic Partners (BD)</td>
+                        <td><input type="number" class="percentage" step="0.01"></td>
+                        <td class="tokens"></td>
+                        <td><input type="number" class="tge-unlock" step="0.01"></td>
+                        <td><input type="number" class="cliff"></td>
+                        <td><input type="number" class="vesting-period"></td>
+                        <td class="monthly-vesting-percentage"></td>
+                        <td class="monthly-vesting-tokens"></td>
+                        <td class="tokens-at-tge"></td>
+                        <td><input type="number" class="discount" step="0.01"></td>
+                        <td><input type="month" class="vesting-start"></td>
+                    </tr>
+                    <tr>
+                        <td>Airdrop #1</td>
+                        <td><input type="number" class="percentage" step="0.01"></td>
+                        <td class="tokens"></td>
+                        <td><input type="number" class="tge-unlock" step="0.01"></td>
+                        <td><input type="number" class="cliff"></td>
+                        <td><input type="number" class="vesting-period"></td>
+                        <td class="monthly-vesting-percentage"></td>
+                        <td class="monthly-vesting-tokens"></td>
+                        <td class="tokens-at-tge"></td>
+                        <td><input type="number" class="discount" step="0.01"></td>
+                        <td><input type="month" class="vesting-start"></td>
+                    </tr>
+                    <tr>
+                        <td>GTM</td>
+                        <td><input type="number" class="percentage" step="0.01"></td>
+                        <td class="tokens"></td>
+                        <td><input type="number" class="tge-unlock" step="0.01"></td>
+                        <td><input type="number" class="cliff"></td>
+                        <td><input type="number" class="vesting-period"></td>
+                        <td class="monthly-vesting-percentage"></td>
+                        <td class="monthly-vesting-tokens"></td>
+                        <td class="tokens-at-tge"></td>
+                        <td><input type="number" class="discount" step="0.01"></td>
+                        <td><input type="month" class="vesting-start"></td>
+                    </tr>
+                    <tr>
+                        <td>Treasury</td>
+                        <td><input type="number" class="percentage" step="0.01"></td>
+                        <td class="tokens"></td>
+                        <td><input type="number" class="tge-unlock" step="0.01"></td>
+                        <td><input type="number" class="cliff"></td>
+                        <td><input type="number" class="vesting-period"></td>
+                        <td class="monthly-vesting-percentage"></td>
+                        <td class="monthly-vesting-tokens"></td>
+                        <td class="tokens-at-tge"></td>
+                        <td><input type="number" class="discount" step="0.01"></td>
+                        <td><input type="month" class="vesting-start"></td>
+                    </tr>
+                    <tr>
+                        <td>Incentivization</td>
+                        <td><input type="number" class="percentage" step="0.01"></td>
+                        <td class="tokens"></td>
+                        <td><input type="number" class="tge-unlock" step="0.01"></td>
+                        <td><input type="number" class="cliff"></td>
+                        <td><input type="number" class="vesting-period"></td>
+                        <td class="monthly-vesting-percentage"></td>
+                        <td class="monthly-vesting-tokens"></td>
+                        <td class="tokens-at-tge"></td>
+                        <td><input type="number" class="discount" step="0.01"></td>
+                        <td><input type="month" class="vesting-start"></td>
+                    </tr>
+                    <tr>
+                        <td>Emissions</td>
+                        <td><input type="number" class="percentage" step="0.01"></td>
+                        <td class="tokens"></td>
+                        <td><input type="number" class="tge-unlock" step="0.01"></td>
+                        <td><input type="number" class="cliff"></td>
+                        <td><input type="number" class="vesting-period"></td>
+                        <td class="monthly-vesting-percentage"></td>
+                        <td class="monthly-vesting-tokens"></td>
+                        <td class="tokens-at-tge"></td>
+                        <td><input type="number" class="discount" step="0.01"></td>
+                        <td><input type="month" class="vesting-start"></td>
+                    </tr>
+                    <tr>
+                        <td>Airdrop #2</td>
+                        <td><input type="number" class="percentage" step="0.01"></td>
+                        <td class="tokens"></td>
+                        <td><input type="number" class="tge-unlock" step="0.01"></td>
+                        <td><input type="number" class="cliff"></td>
+                        <td><input type="number" class="vesting-period"></td>
+                        <td class="monthly-vesting-percentage"></td>
+                        <td class="monthly-vesting-tokens"></td>
+                        <td class="tokens-at-tge"></td>
+                        <td><input type="number" class="discount" step="0.01"></td>
+                        <td><input type="month" class="vesting-start"></td>
+                    </tr>
+                    <tr>
+                        <td>Liquidity Pool</td>
+                        <td><input type="number" class="percentage" step="0.01"></td>
+                        <td class="tokens"></td>
+                        <td><input type="number" class="tge-unlock" step="0.01"></td>
+                        <td><input type="number" class="cliff"></td>
+                        <td><input type="number" class="vesting-period"></td>
+                        <td class="monthly-vesting-percentage"></td>
+                        <td class="monthly-vesting-tokens"></td>
+                        <td class="tokens-at-tge"></td>
+                        <td><input type="number" class="discount" step="0.01"></td>
+                        <td><input type="month" class="vesting-start"></td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td>Sum</td>
+                        <td id="total-percentage">100.00%</td>
+                        <td id="total-tokens"></td>
+                        <td colspan="8"></td>
+                    </tr>
+                </tfoot>
+            </table>
+
+            <h3>Airdrop Module</h3>
+            <table id="airdrop-module">
+                <thead>
+                    <tr>
+                        <th>Allocation</th>
+                        <th>Percentage</th>
+                        <th>Tokens</th>
+                        <th>Date 1</th>
+                        <th>Amount 1</th>
+                        <th>Date 2</th>
+                        <th>Amount 2</th>
+                        <th>Date 3</th>
+                        <th>Amount 3</th>
+                        <th>Check Sum</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Airdrop #2</td>
+                        <td id="airdrop2-percentage"></td>
+                        <td id="airdrop2-tokens"></td>
+                        <td><input type="date" id="airdrop2-date1"></td>
+                        <td><input type="number" id="airdrop2-amount1" step="0.01"></td>
+                        <td><input type="date" id="airdrop2-date2"></td>
+                        <td><input type="number" id="airdrop2-amount2" step="0.01"></td>
+                        <td><input type="date" id="airdrop2-date3"></td>
+                        <td><input type="number" id="airdrop2-amount3" step="0.01"></td>
+                        <td id="airdrop2-check-sum"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <button onclick="generateFundRaisingCharts()">Generate Charts</button>
+        <div id="pie-chart"></div>
+        <div id="vesting-chart"></div>
+        </div>   
         
     </div>
 
+<!-- FUNCTIONS -->
     <script>
         const plotlyLayout = {
             paper_bgcolor: '#1A1A2E',
@@ -847,6 +1115,130 @@
             advancedInputs.style.display = advancedInputs.style.display === 'none' ? 'block' : 'none';
         
         }
+
+        let initialTotalSupply = 0;
+
+        function initializeFundRaisingTab() {
+            document.getElementById('initial-total-supply').addEventListener('input', updateAllocationTable);
+            document.querySelectorAll('#allocation-table input').forEach(input => {
+                input.addEventListener('input', updateAllocationTable);
+            });
+            document.querySelectorAll('#airdrop-module input').forEach(input => {
+                input.addEventListener('input', updateAirdropModule);
+            });
+        }
+
+        function updateAllocationTable() {
+            initialTotalSupply = parseFloat(document.getElementById('initial-total-supply').value) || 0;
+            let totalPercentage = 0;
+            let totalTokens = 0;
+
+            document.querySelectorAll('#allocation-table tbody tr').forEach(row => {
+                const percentage = parseFloat(row.querySelector('.percentage').value) || 0;
+                const tokens = initialTotalSupply * (percentage / 100);
+                const tgeUnlock = parseFloat(row.querySelector('.tge-unlock').value) || 0;
+                const cliff = parseFloat(row.querySelector('.cliff').value) || 0;
+                const vestingPeriod = parseFloat(row.querySelector('.vesting-period').value) || 0;
+
+                row.querySelector('.tokens').textContent = tokens.toFixed(0);
+                
+                const monthlyVestingPercentage = vestingPeriod > 0 ? (100 - tgeUnlock) / vestingPeriod : 0;
+                row.querySelector('.monthly-vesting-percentage').textContent = monthlyVestingPercentage.toFixed(2);
+
+                const monthlyVestingTokens = tokens * (monthlyVestingPercentage / 100);
+                row.querySelector('.monthly-vesting-tokens').textContent = monthlyVestingTokens.toFixed(0);
+
+                const tokensAtTGE = tokens * (tgeUnlock / 100);
+                row.querySelector('.tokens-at-tge').textContent = tokensAtTGE.toFixed(0);
+
+                totalPercentage += percentage;
+                totalTokens += tokens;
+            });
+
+            document.getElementById('total-percentage').textContent = totalPercentage.toFixed(2) + '%';
+            document.getElementById('total-tokens').textContent = totalTokens.toFixed(0);
+
+            updateAirdropModule();
+        }
+
+        function updateAirdropModule() {
+            const airdrop2Row = document.querySelector('#allocation-table tbody tr:nth-last-child(2)');
+            const airdrop2Percentage = parseFloat(airdrop2Row.querySelector('.percentage').value) || 0;
+            const airdrop2Tokens = initialTotalSupply * (airdrop2Percentage / 100);
+
+            document.getElementById('airdrop2-percentage').textContent = airdrop2Percentage.toFixed(2) + '%';
+            document.getElementById('airdrop2-tokens').textContent = airdrop2Tokens.toFixed(0);
+
+            const amount1 = parseFloat(document.getElementById('airdrop2-amount1').value) || 0;
+            const amount2 = parseFloat(document.getElementById('airdrop2-amount2').value) || 0;
+            const amount3 = parseFloat(document.getElementById('airdrop2-amount3').value) || 0;
+
+            const checkSum = amount1 + amount2 + amount3;
+            document.getElementById('airdrop2-check-sum').textContent = checkSum.toFixed(2) + '%';
+        }
+
+        function generateFundRaisingCharts() {
+            const allocationData = [];
+            const vestingData = [];
+
+            document.querySelectorAll('#allocation-table tbody tr').forEach(row => {
+                const allocation = row.querySelector('td:first-child').textContent;
+                const percentage = parseFloat(row.querySelector('.percentage').value) || 0;
+                const tokens = parseFloat(row.querySelector('.tokens').textContent) || 0;
+                const tgeUnlock = parseFloat(row.querySelector('.tge-unlock').value) || 0;
+                const cliff = parseFloat(row.querySelector('.cliff').value) || 0;
+                const vestingPeriod = parseFloat(row.querySelector('.vesting-period').value) || 0;
+                const vestingStart = row.querySelector('.vesting-start').value;
+
+                allocationData.push({
+                    allocation: allocation,
+                    percentage: percentage
+                });
+
+                vestingData.push({
+                    allocation: allocation,
+                    tokens: tokens,
+                    tgeUnlock: tgeUnlock,
+                    cliff: cliff,
+                    vestingPeriod: vestingPeriod,
+                    vestingStart: vestingStart
+                });
+            });
+
+            const airdropModule = {
+                percentage: parseFloat(document.getElementById('airdrop2-percentage').textContent) || 0,
+                tokens: parseFloat(document.getElementById('airdrop2-tokens').textContent) || 0,
+                date1: document.getElementById('airdrop2-date1').value,
+                amount1: parseFloat(document.getElementById('airdrop2-amount1').value) || 0,
+                date2: document.getElementById('airdrop2-date2').value,
+                amount2: parseFloat(document.getElementById('airdrop2-amount2').value) || 0,
+                date3: document.getElementById('airdrop2-date3').value,
+                amount3: parseFloat(document.getElementById('airdrop2-amount3').value) || 0
+            };
+
+            fetch('/generate_fund_raising_charts', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    allocationData: allocationData,
+                    vestingData: vestingData,
+                    airdropModule: airdropModule
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                Plotly.newPlot('pie-chart', JSON.parse(data.pie_chart).data, JSON.parse(data.pie_chart).layout);
+                Plotly.newPlot('vesting-chart', JSON.parse(data.vesting_chart).data, JSON.parse(data.vesting_chart).layout);
+            })
+            .catch(error => {
+                console.error('Error generating charts:', error);
+            });
+        }
+
+        
+        document.addEventListener('DOMContentLoaded', initializeFundRaisingTab);
     </script>
     
 </body>

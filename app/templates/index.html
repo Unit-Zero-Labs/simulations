@@ -164,9 +164,9 @@
     </div>
     
     <div id="tab-container">
-        <button class="tab-button active" onclick="openTab(event, 'lending')">Lending Simulation</button>
-        <button class="tab-button" onclick="openTab(event, 'stable')">Stable Pool Simulation</button>
-        <button class="tab-button" onclick="openTab(event, 'non-stable')">Non-Stable Pool Simulation</button>
+        <button class="tab-button active" onclick="openTab(event, 'lending')">Lending</button>
+        <button class="tab-button" onclick="openTab(event, 'stable')">Stable Pair Pool</button>
+        <button class="tab-button" onclick="openTab(event, 'non-stable')">Non-Stable Pair Pool</button>
         <button class="tab-button" onclick="openTab(event, 'tokenomics')">Tokenomics Builder</button>
         <button class="tab-button" onclick="openTab(event, 'fund-raising')">Fund Raising</button>
     </div>
@@ -369,9 +369,10 @@
                 <input type="number" id="jump_multiplier" step="0.01" placeholder=" ">
                 <label for="jump_multiplier">Jump Multiplier</label>
             </div>
-    </div>
+        </div>
+    </div>    
 
-    <div id="fund-raising" class="tab-content" style="display:block;">
+    <div id="fund-raising" class="tab-content">
         <h2>Fund Raising</h2>
         <div id="fund-raising-inputs">
             <h3>Basic Token Parameters</h3>

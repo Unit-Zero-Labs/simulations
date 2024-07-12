@@ -1157,17 +1157,55 @@
             advancedInputs.style.display = advancedInputs.style.display === 'none' ? 'block' : 'none';
         
         }
+        const initialAllocationValues = {
+            "Strategic": {percentage: 8, tgeUnlock: 0, cliff: 6, vestingPeriod: 9},
+            "Seed": {percentage: 8.25, tgeUnlock: 0, cliff: 4, vestingPeriod: 9},
+            "Public Sale": {percentage: 2, tgeUnlock: 20, cliff: 0.5, vestingPeriod: 3},
+            "Founders / Team": {percentage: 15, tgeUnlock: 0, cliff: 12, vestingPeriod: 48},
+            "Advisors": {percentage: 6, tgeUnlock: 0, cliff: 12, vestingPeriod: 36},
+            "Strategic Partners (BD)": {percentage: 5, tgeUnlock: 0, cliff: 2, vestingPeriod: 24},
+            "Airdrop #1": {percentage: 5, tgeUnlock: 33, cliff: 0.5, vestingPeriod: 3},
+            "GTM": {percentage: 2, tgeUnlock: 90, cliff: 6, vestingPeriod: 6},
+            "Treasury": {percentage: 5, tgeUnlock: 0, cliff: 6, vestingPeriod: 12},
+            "Incentivization": {percentage: 1.5, tgeUnlock: 0, cliff: 2, vestingPeriod: 3},
+            "Emissions": {percentage: 30, tgeUnlock: 0, cliff: 2, vestingPeriod: 133},
+            "Airdrop #2": {percentage: 5, tgeUnlock: 0, cliff: 0, vestingPeriod: 48},
+            "Liquidity Pool": {percentage: 7.25, tgeUnlock: 0, cliff: 12, vestingPeriod: 24}
+        };
 
         let initialTotalSupply = 0;
 
         function initializeFundRaisingTab() {
             document.getElementById('initial-total-supply').addEventListener('input', updateAllocationTable);
+            
+            const table = document.querySelector('#allocation-table tbody');
+            table.innerHTML = ''; 
+            
+            for (const [allocation, values] of Object.entries(initialAllocationValues)) {
+                const row = table.insertRow();
+                row.innerHTML = `
+                    <td>${allocation}</td>
+                    <td><input type="number" class="percentage" step="0.01" value="${values.percentage}"></td>
+                    <td class="tokens"></td>
+                    <td><input type="number" class="tge-unlock" step="0.01" value="${values.tgeUnlock}"></td>
+                    <td><input type="number" class="cliff" step="0.1" value="${values.cliff}"></td>
+                    <td><input type="number" class="vesting-period" value="${values.vestingPeriod}"></td>
+                    <td class="monthly-vesting-percentage"></td>
+                    <td class="monthly-vesting-tokens"></td>
+                    <td class="tokens-at-tge"></td>
+                    <td><input type="number" class="discount" step="0.01"></td>
+                    <td><input type="month" class="vesting-start"></td>
+                `;
+            }
+
             document.querySelectorAll('#allocation-table input').forEach(input => {
                 input.addEventListener('input', updateAllocationTable);
             });
             document.querySelectorAll('#airdrop-module input').forEach(input => {
                 input.addEventListener('input', updateAirdropModule);
             });
+
+            updateAllocationTable(); 
         }
 
         function updateAllocationTable() {
@@ -1177,7 +1215,7 @@
 
             document.querySelectorAll('#allocation-table tbody tr').forEach(row => {
                 const percentage = parseFloat(row.querySelector('.percentage').value) || 0;
-                const tokens = initialTotalSupply * (percentage / 100);
+                const tokens = initialTotalSupply ? initialTotalSupply * (percentage / 100) : 0;
                 const tgeUnlock = parseFloat(row.querySelector('.tge-unlock').value) || 0;
                 const cliff = parseFloat(row.querySelector('.cliff').value) || 0;
                 const vestingPeriod = parseFloat(row.querySelector('.vesting-period').value) || 0;

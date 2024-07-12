@@ -183,20 +183,13 @@
             color: var(--accent);
             animation: bounce 1s infinite;
         }
+        .airdrop-container {
+            width: 100%;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
 
-        @keyframes bounce {
-            0%, 100% { transform: translateY(-50%); }
-            50% { transform: translateY(-60%); }
-        }
-        @media (max-width: 768px) {
-            #fund-raising .input-container {
-                width: 100%;
-            }
-            
-            #fund-raising .input-container input {
-                width: 100%;
-            }
-        }
+        
     </style>
 </head>
 
@@ -638,6 +631,7 @@
                 </table>
             </div>      
             <h3>Airdrop Module</h3>
+            <div class="airdrop-container">
             <table id="airdrop-module">
                 <thead>
                     <tr>
@@ -668,6 +662,7 @@
                     </tr>
                 </tbody>
             </table>
+            </div>
         </div>
         <button onclick="generateFundRaisingCharts()">Generate Charts</button>
         <div id="pie-chart"></div>

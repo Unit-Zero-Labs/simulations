@@ -153,6 +153,50 @@
         .scenario-button:last-child {
             margin-right: 0;
         }
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        #allocation-table {
+            width: auto;
+            min-width: 100%;
+        }
+
+        #allocation-table th,
+        #allocation-table td {
+            white-space: nowrap;
+            padding: 8px;
+        }
+
+        #allocation-table input {
+            width: 80px;
+        }
+        .table-container::after {
+            content: '➜';
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 24px;
+            color: var(--accent);
+            animation: bounce 1s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(-50%); }
+            50% { transform: translateY(-60%); }
+        }
+        @media (max-width: 768px) {
+            #fund-raising .input-container {
+                width: 100%;
+            }
+            
+            #fund-raising .input-container input {
+                width: 100%;
+            }
+        }
     </style>
 </head>
 
@@ -402,203 +446,205 @@
             </div>
 
             <h3>Initial Token Allocation & Vesting Schedule</h3>
-            <table id="allocation-table">
-                <thead>
-                    <tr>
-                        <th>Allocation</th>
-                        <th>Percentage</th>
-                        <th>Tokens</th>
-                        <th>TGE Unlock %</th>
-                        <th>Cliff (months)</th>
-                        <th>Vesting Period (months)</th>
-                        <th>Monthly Vesting %</th>
-                        <th>Monthly Vesting Tokens</th>
-                        <th>Tokens at TGE</th>
-                        <th>Discount</th>
-                        <th>Vesting Start</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Strategic</td>
-                        <td><input type="number" class="percentage" step="0.01"></td>
-                        <td class="tokens"></td>
-                        <td><input type="number" class="tge-unlock" step="0.01"></td>
-                        <td><input type="number" class="cliff"></td>
-                        <td><input type="number" class="vesting-period"></td>
-                        <td class="monthly-vesting-percentage"></td>
-                        <td class="monthly-vesting-tokens"></td>
-                        <td class="tokens-at-tge"></td>
-                        <td><input type="number" class="discount" step="0.01"></td>
-                        <td><input type="month" class="vesting-start"></td>
-                    </tr>
-                    <tr>
-                        <td>Seed</td>
-                        <td><input type="number" class="percentage" step="0.01"></td>
-                        <td class="tokens"></td>
-                        <td><input type="number" class="tge-unlock" step="0.01"></td>
-                        <td><input type="number" class="cliff"></td>
-                        <td><input type="number" class="vesting-period"></td>
-                        <td class="monthly-vesting-percentage"></td>
-                        <td class="monthly-vesting-tokens"></td>
-                        <td class="tokens-at-tge"></td>
-                        <td><input type="number" class="discount" step="0.01"></td>
-                        <td><input type="month" class="vesting-start"></td>
-                    </tr>
-                    <tr>
-                        <td>Public Sale</td>
-                        <td><input type="number" class="percentage" step="0.01"></td>
-                        <td class="tokens"></td>
-                        <td><input type="number" class="tge-unlock" step="0.01"></td>
-                        <td><input type="number" class="cliff"></td>
-                        <td><input type="number" class="vesting-period"></td>
-                        <td class="monthly-vesting-percentage"></td>
-                        <td class="monthly-vesting-tokens"></td>
-                        <td class="tokens-at-tge"></td>
-                        <td><input type="number" class="discount" step="0.01"></td>
-                        <td><input type="month" class="vesting-start"></td>
-                    </tr>
-                    <tr>
-                        <td>Founders / Team</td>
-                        <td><input type="number" class="percentage" step="0.01"></td>
-                        <td class="tokens"></td>
-                        <td><input type="number" class="tge-unlock" step="0.01"></td>
-                        <td><input type="number" class="cliff"></td>
-                        <td><input type="number" class="vesting-period"></td>
-                        <td class="monthly-vesting-percentage"></td>
-                        <td class="monthly-vesting-tokens"></td>
-                        <td class="tokens-at-tge"></td>
-                        <td><input type="number" class="discount" step="0.01"></td>
-                        <td><input type="month" class="vesting-start"></td>
-                    </tr>
-                    <tr>
-                        <td>Advisors</td>
-                        <td><input type="number" class="percentage" step="0.01"></td>
-                        <td class="tokens"></td>
-                        <td><input type="number" class="tge-unlock" step="0.01"></td>
-                        <td><input type="number" class="cliff"></td>
-                        <td><input type="number" class="vesting-period"></td>
-                        <td class="monthly-vesting-percentage"></td>
-                        <td class="monthly-vesting-tokens"></td>
-                        <td class="tokens-at-tge"></td>
-                        <td><input type="number" class="discount" step="0.01"></td>
-                        <td><input type="month" class="vesting-start"></td>
-                    </tr>
-                    <tr>
-                        <td>Strategic Partners (BD)</td>
-                        <td><input type="number" class="percentage" step="0.01"></td>
-                        <td class="tokens"></td>
-                        <td><input type="number" class="tge-unlock" step="0.01"></td>
-                        <td><input type="number" class="cliff"></td>
-                        <td><input type="number" class="vesting-period"></td>
-                        <td class="monthly-vesting-percentage"></td>
-                        <td class="monthly-vesting-tokens"></td>
-                        <td class="tokens-at-tge"></td>
-                        <td><input type="number" class="discount" step="0.01"></td>
-                        <td><input type="month" class="vesting-start"></td>
-                    </tr>
-                    <tr>
-                        <td>Airdrop #1</td>
-                        <td><input type="number" class="percentage" step="0.01"></td>
-                        <td class="tokens"></td>
-                        <td><input type="number" class="tge-unlock" step="0.01"></td>
-                        <td><input type="number" class="cliff"></td>
-                        <td><input type="number" class="vesting-period"></td>
-                        <td class="monthly-vesting-percentage"></td>
-                        <td class="monthly-vesting-tokens"></td>
-                        <td class="tokens-at-tge"></td>
-                        <td><input type="number" class="discount" step="0.01"></td>
-                        <td><input type="month" class="vesting-start"></td>
-                    </tr>
-                    <tr>
-                        <td>GTM</td>
-                        <td><input type="number" class="percentage" step="0.01"></td>
-                        <td class="tokens"></td>
-                        <td><input type="number" class="tge-unlock" step="0.01"></td>
-                        <td><input type="number" class="cliff"></td>
-                        <td><input type="number" class="vesting-period"></td>
-                        <td class="monthly-vesting-percentage"></td>
-                        <td class="monthly-vesting-tokens"></td>
-                        <td class="tokens-at-tge"></td>
-                        <td><input type="number" class="discount" step="0.01"></td>
-                        <td><input type="month" class="vesting-start"></td>
-                    </tr>
-                    <tr>
-                        <td>Treasury</td>
-                        <td><input type="number" class="percentage" step="0.01"></td>
-                        <td class="tokens"></td>
-                        <td><input type="number" class="tge-unlock" step="0.01"></td>
-                        <td><input type="number" class="cliff"></td>
-                        <td><input type="number" class="vesting-period"></td>
-                        <td class="monthly-vesting-percentage"></td>
-                        <td class="monthly-vesting-tokens"></td>
-                        <td class="tokens-at-tge"></td>
-                        <td><input type="number" class="discount" step="0.01"></td>
-                        <td><input type="month" class="vesting-start"></td>
-                    </tr>
-                    <tr>
-                        <td>Incentivization</td>
-                        <td><input type="number" class="percentage" step="0.01"></td>
-                        <td class="tokens"></td>
-                        <td><input type="number" class="tge-unlock" step="0.01"></td>
-                        <td><input type="number" class="cliff"></td>
-                        <td><input type="number" class="vesting-period"></td>
-                        <td class="monthly-vesting-percentage"></td>
-                        <td class="monthly-vesting-tokens"></td>
-                        <td class="tokens-at-tge"></td>
-                        <td><input type="number" class="discount" step="0.01"></td>
-                        <td><input type="month" class="vesting-start"></td>
-                    </tr>
-                    <tr>
-                        <td>Emissions</td>
-                        <td><input type="number" class="percentage" step="0.01"></td>
-                        <td class="tokens"></td>
-                        <td><input type="number" class="tge-unlock" step="0.01"></td>
-                        <td><input type="number" class="cliff"></td>
-                        <td><input type="number" class="vesting-period"></td>
-                        <td class="monthly-vesting-percentage"></td>
-                        <td class="monthly-vesting-tokens"></td>
-                        <td class="tokens-at-tge"></td>
-                        <td><input type="number" class="discount" step="0.01"></td>
-                        <td><input type="month" class="vesting-start"></td>
-                    </tr>
-                    <tr>
-                        <td>Airdrop #2</td>
-                        <td><input type="number" class="percentage" step="0.01"></td>
-                        <td class="tokens"></td>
-                        <td><input type="number" class="tge-unlock" step="0.01"></td>
-                        <td><input type="number" class="cliff"></td>
-                        <td><input type="number" class="vesting-period"></td>
-                        <td class="monthly-vesting-percentage"></td>
-                        <td class="monthly-vesting-tokens"></td>
-                        <td class="tokens-at-tge"></td>
-                        <td><input type="number" class="discount" step="0.01"></td>
-                        <td><input type="month" class="vesting-start"></td>
-                    </tr>
-                    <tr>
-                        <td>Liquidity Pool</td>
-                        <td><input type="number" class="percentage" step="0.01"></td>
-                        <td class="tokens"></td>
-                        <td><input type="number" class="tge-unlock" step="0.01"></td>
-                        <td><input type="number" class="cliff"></td>
-                        <td><input type="number" class="vesting-period"></td>
-                        <td class="monthly-vesting-percentage"></td>
-                        <td class="monthly-vesting-tokens"></td>
-                        <td class="tokens-at-tge"></td>
-                        <td><input type="number" class="discount" step="0.01"></td>
-                        <td><input type="month" class="vesting-start"></td>
-                    </tr>
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <td>Sum</td>
-                        <td id="total-percentage">100.00%</td>
-                        <td id="total-tokens"></td>
-                        <td colspan="8"></td>
-                    </tr>
-                </tfoot>
-            </table>
-
+            <div class="table-container">
+                
+                <table id="allocation-table">
+                    <thead>
+                        <tr>
+                            <th>Allocation</th>
+                            <th>Percentage</th>
+                            <th>Tokens</th>
+                            <th>TGE Unlock %</th>
+                            <th>Cliff (months)</th>
+                            <th>Vesting Period (months)</th>
+                            <th>Monthly Vesting %</th>
+                            <th>Monthly Vesting Tokens</th>
+                            <th>Tokens at TGE</th>
+                            <th>Discount</th>
+                            <th>Vesting Start</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Strategic</td>
+                            <td><input type="number" class="percentage" step="0.01"></td>
+                            <td class="tokens"></td>
+                            <td><input type="number" class="tge-unlock" step="0.01"></td>
+                            <td><input type="number" class="cliff"></td>
+                            <td><input type="number" class="vesting-period"></td>
+                            <td class="monthly-vesting-percentage"></td>
+                            <td class="monthly-vesting-tokens"></td>
+                            <td class="tokens-at-tge"></td>
+                            <td><input type="number" class="discount" step="0.01"></td>
+                            <td><input type="month" class="vesting-start"></td>
+                        </tr>
+                        <tr>
+                            <td>Seed</td>
+                            <td><input type="number" class="percentage" step="0.01"></td>
+                            <td class="tokens"></td>
+                            <td><input type="number" class="tge-unlock" step="0.01"></td>
+                            <td><input type="number" class="cliff"></td>
+                            <td><input type="number" class="vesting-period"></td>
+                            <td class="monthly-vesting-percentage"></td>
+                            <td class="monthly-vesting-tokens"></td>
+                            <td class="tokens-at-tge"></td>
+                            <td><input type="number" class="discount" step="0.01"></td>
+                            <td><input type="month" class="vesting-start"></td>
+                        </tr>
+                        <tr>
+                            <td>Public Sale</td>
+                            <td><input type="number" class="percentage" step="0.01"></td>
+                            <td class="tokens"></td>
+                            <td><input type="number" class="tge-unlock" step="0.01"></td>
+                            <td><input type="number" class="cliff"></td>
+                            <td><input type="number" class="vesting-period"></td>
+                            <td class="monthly-vesting-percentage"></td>
+                            <td class="monthly-vesting-tokens"></td>
+                            <td class="tokens-at-tge"></td>
+                            <td><input type="number" class="discount" step="0.01"></td>
+                            <td><input type="month" class="vesting-start"></td>
+                        </tr>
+                        <tr>
+                            <td>Founders / Team</td>
+                            <td><input type="number" class="percentage" step="0.01"></td>
+                            <td class="tokens"></td>
+                            <td><input type="number" class="tge-unlock" step="0.01"></td>
+                            <td><input type="number" class="cliff"></td>
+                            <td><input type="number" class="vesting-period"></td>
+                            <td class="monthly-vesting-percentage"></td>
+                            <td class="monthly-vesting-tokens"></td>
+                            <td class="tokens-at-tge"></td>
+                            <td><input type="number" class="discount" step="0.01"></td>
+                            <td><input type="month" class="vesting-start"></td>
+                        </tr>
+                        <tr>
+                            <td>Advisors</td>
+                            <td><input type="number" class="percentage" step="0.01"></td>
+                            <td class="tokens"></td>
+                            <td><input type="number" class="tge-unlock" step="0.01"></td>
+                            <td><input type="number" class="cliff"></td>
+                            <td><input type="number" class="vesting-period"></td>
+                            <td class="monthly-vesting-percentage"></td>
+                            <td class="monthly-vesting-tokens"></td>
+                            <td class="tokens-at-tge"></td>
+                            <td><input type="number" class="discount" step="0.01"></td>
+                            <td><input type="month" class="vesting-start"></td>
+                        </tr>
+                        <tr>
+                            <td>Strategic Partners (BD)</td>
+                            <td><input type="number" class="percentage" step="0.01"></td>
+                            <td class="tokens"></td>
+                            <td><input type="number" class="tge-unlock" step="0.01"></td>
+                            <td><input type="number" class="cliff"></td>
+                            <td><input type="number" class="vesting-period"></td>
+                            <td class="monthly-vesting-percentage"></td>
+                            <td class="monthly-vesting-tokens"></td>
+                            <td class="tokens-at-tge"></td>
+                            <td><input type="number" class="discount" step="0.01"></td>
+                            <td><input type="month" class="vesting-start"></td>
+                        </tr>
+                        <tr>
+                            <td>Airdrop #1</td>
+                            <td><input type="number" class="percentage" step="0.01"></td>
+                            <td class="tokens"></td>
+                            <td><input type="number" class="tge-unlock" step="0.01"></td>
+                            <td><input type="number" class="cliff"></td>
+                            <td><input type="number" class="vesting-period"></td>
+                            <td class="monthly-vesting-percentage"></td>
+                            <td class="monthly-vesting-tokens"></td>
+                            <td class="tokens-at-tge"></td>
+                            <td><input type="number" class="discount" step="0.01"></td>
+                            <td><input type="month" class="vesting-start"></td>
+                        </tr>
+                        <tr>
+                            <td>GTM</td>
+                            <td><input type="number" class="percentage" step="0.01"></td>
+                            <td class="tokens"></td>
+                            <td><input type="number" class="tge-unlock" step="0.01"></td>
+                            <td><input type="number" class="cliff"></td>
+                            <td><input type="number" class="vesting-period"></td>
+                            <td class="monthly-vesting-percentage"></td>
+                            <td class="monthly-vesting-tokens"></td>
+                            <td class="tokens-at-tge"></td>
+                            <td><input type="number" class="discount" step="0.01"></td>
+                            <td><input type="month" class="vesting-start"></td>
+                        </tr>
+                        <tr>
+                            <td>Treasury</td>
+                            <td><input type="number" class="percentage" step="0.01"></td>
+                            <td class="tokens"></td>
+                            <td><input type="number" class="tge-unlock" step="0.01"></td>
+                            <td><input type="number" class="cliff"></td>
+                            <td><input type="number" class="vesting-period"></td>
+                            <td class="monthly-vesting-percentage"></td>
+                            <td class="monthly-vesting-tokens"></td>
+                            <td class="tokens-at-tge"></td>
+                            <td><input type="number" class="discount" step="0.01"></td>
+                            <td><input type="month" class="vesting-start"></td>
+                        </tr>
+                        <tr>
+                            <td>Incentivization</td>
+                            <td><input type="number" class="percentage" step="0.01"></td>
+                            <td class="tokens"></td>
+                            <td><input type="number" class="tge-unlock" step="0.01"></td>
+                            <td><input type="number" class="cliff"></td>
+                            <td><input type="number" class="vesting-period"></td>
+                            <td class="monthly-vesting-percentage"></td>
+                            <td class="monthly-vesting-tokens"></td>
+                            <td class="tokens-at-tge"></td>
+                            <td><input type="number" class="discount" step="0.01"></td>
+                            <td><input type="month" class="vesting-start"></td>
+                        </tr>
+                        <tr>
+                            <td>Emissions</td>
+                            <td><input type="number" class="percentage" step="0.01"></td>
+                            <td class="tokens"></td>
+                            <td><input type="number" class="tge-unlock" step="0.01"></td>
+                            <td><input type="number" class="cliff"></td>
+                            <td><input type="number" class="vesting-period"></td>
+                            <td class="monthly-vesting-percentage"></td>
+                            <td class="monthly-vesting-tokens"></td>
+                            <td class="tokens-at-tge"></td>
+                            <td><input type="number" class="discount" step="0.01"></td>
+                            <td><input type="month" class="vesting-start"></td>
+                        </tr>
+                        <tr>
+                            <td>Airdrop #2</td>
+                            <td><input type="number" class="percentage" step="0.01"></td>
+                            <td class="tokens"></td>
+                            <td><input type="number" class="tge-unlock" step="0.01"></td>
+                            <td><input type="number" class="cliff"></td>
+                            <td><input type="number" class="vesting-period"></td>
+                            <td class="monthly-vesting-percentage"></td>
+                            <td class="monthly-vesting-tokens"></td>
+                            <td class="tokens-at-tge"></td>
+                            <td><input type="number" class="discount" step="0.01"></td>
+                            <td><input type="month" class="vesting-start"></td>
+                        </tr>
+                        <tr>
+                            <td>Liquidity Pool</td>
+                            <td><input type="number" class="percentage" step="0.01"></td>
+                            <td class="tokens"></td>
+                            <td><input type="number" class="tge-unlock" step="0.01"></td>
+                            <td><input type="number" class="cliff"></td>
+                            <td><input type="number" class="vesting-period"></td>
+                            <td class="monthly-vesting-percentage"></td>
+                            <td class="monthly-vesting-tokens"></td>
+                            <td class="tokens-at-tge"></td>
+                            <td><input type="number" class="discount" step="0.01"></td>
+                            <td><input type="month" class="vesting-start"></td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td>Sum</td>
+                            <td id="total-percentage">100.00%</td>
+                            <td id="total-tokens"></td>
+                            <td colspan="8"></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>      
             <h3>Airdrop Module</h3>
             <table id="airdrop-module">
                 <thead>

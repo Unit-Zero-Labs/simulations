@@ -1356,10 +1356,12 @@
             });
         }
 
+        
         document.addEventListener('DOMContentLoaded', function() {
-        openTab({currentTarget: document.querySelector('.tab-button')}, 'simulations');
-        });
-        </script>
+            initializeFundRaisingTab();
+            openTab({currentTarget: document.querySelector('.tab-button')}, 'simulations');
+    });
+    </script>
         
 </body>
 </html>

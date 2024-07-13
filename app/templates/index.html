@@ -201,14 +201,25 @@
     </div>
     
     <div id="tab-container">
-        <button class="tab-button active" onclick="openTab(event, 'lending')">Lending</button>
-        <button class="tab-button" onclick="openTab(event, 'stable')">Stable Pair Pool</button>
-        <button class="tab-button" onclick="openTab(event, 'non-stable')">Non-Stable Pair Pool</button>
-        <button class="tab-button" onclick="openTab(event, 'tokenomics')">Tokenomics Builder</button>
-        <button class="tab-button" onclick="openTab(event, 'fund-raising')">Fund Raising</button>
+        <div class="tab-group">
+            <button class="tab-button active" onclick="openTab(event, 'simulations')">Simulations</button>
+            <button class="tab-button" onclick="openTab(event, 'tokenomics')">Tokenomics</button>
+        </div>
     </div>
+    
+    <div id="simulations" class="tab-content" style="display:block;">
+        <div class="description-area">
+            <h2>DeFi Simulations</h2>
+            <p>This section contains simulations for various DeFi scenarios including lending, stable pools, and non-stable pools. These simulations help in understanding the dynamics of different DeFi protocols.</p>
+        </div>
+    
+        <div class="sub-tab-container">
+            <button class="sub-tab-button active" onclick="openSubTab(event, 'lending')">Lending</button>
+            <button class="sub-tab-button" onclick="openSubTab(event, 'stable')">Stable Pool</button>
+            <button class="sub-tab-button" onclick="openSubTab(event, 'non-stable')">Non-Stable Pool</button>
+        </div>
 
-    <div id="lending" class="tab-content" style="display:block;">
+    <div id="lending" class="sub-tab-content" style="display:block;">
         <h2>Lending Simulation</h2>
         <div class="input-container">
             <input type="number" id="collateral-amount" placeholder=" ">
@@ -238,7 +249,7 @@
         <div id="lending-chart"></div>
     </div>
 
-    <div id="stable" class="tab-content">
+    <div id="stable" class="sub-tab-content">
         <h2>Stable Pool Simulation</h2>
         <div class="input-container">
             <input type="number" id="stable-initial-price" placeholder=" ">
@@ -264,7 +275,7 @@
         <div id="stable-chart"></div>
     </div>
     
-    <div id="non-stable" class="tab-content">
+    <div id="non-stable" class="sub-tab-content">
         <h2>Non-Stable Pool Simulation</h2>
         <div class="input-container">
             <input type="number" id="non-stable-initial-price" placeholder=" ">
@@ -286,130 +297,7 @@
         <div id="non-stable-chart"></div>
     </div>
 
-
-    <div id="tokenomics" class="tab-content">
-        <h2>Tokenomics Builder</h2>
-        <div id="basic-inputs">
-            <h3>Protocol Metrics</h3>
-            <div class="input-container">
-                <input type="number" id="initial_tvl" placeholder=" ">
-                <label for="initial_tvl">Initial TVL ($)</label>
-            </div>
-            <div class="input-container">
-                <input type="number" id="initial_borrow" placeholder=" ">
-                <label for="initial_borrow">Initial Borrow ($)</label>
-            </div>
-            <div class="input-container">
-                <input type="number" id="initial_token_circulating" placeholder=" ">
-                <label for="initial_token_circulating">Token Circulating Supply</label>
-            </div>
-            <div class="input-container">
-                <input type="number" id="total_token_emitted" placeholder=" ">
-                <label for="total_token_emitted">Total Tokens To be Emitted</label>
-            </div>
-            <div class="input-container">
-                <input type="number" id="initial_reserves" placeholder=" ">
-                <label for="initial_reserves">Initial Reserves ($)</label>
-            </div>
-            <div class="input-container">
-                <input type="number" id="token_price" step="0.0001" placeholder=" ">
-                <label for="token_price">Initial Token Price ($)</label>
-            </div>
-            <div class="input-container">
-                <input type="number" id="protocol_revenue_share" step="0.01" placeholder=" ">
-                <label for="protocol_revenue_share">Protocol Revenue Share</label>
-            </div>
-            <div class="input-container">
-                <input type="number" id="target_utilization" step="0.01" placeholder=" ">
-                <label for="target_utilization">Target Utilization</label>
-            </div>
-        </div>
-
-        <div id="scenario-buttons">
-            <button class="scenario-button" onclick="setScenario('bear')">Bear</button>
-            <button class="scenario-button" onclick="setScenario('base')">Base</button>
-            <button class="scenario-button" onclick="setScenario('bull')">Bull</button>
-        </div>
-        <button onclick="runTokenomicsSimulation()">Run Simulation</button>
-
-        <div id="tokenomics-chart"></div>
-
-        <button onclick="toggleAdvancedFeatures()">Advanced Features</button>
-    
-        <div id="advanced-inputs" style="display: none;">
-            
-            <div class="input-container">
-                <input type="number" id="num_simulations" placeholder=" ">
-                <label for="num_simulations">Number of Simulations</label>
-            </div>
-            <div class="input-container">
-                <input type="number" id="num_months" placeholder=" ">
-                <label for="num_months">Number of Months</label>
-            </div>
-            <div class="input-container">
-                <input type="number" id="mom_tvl_growth" step="0.001" placeholder=" ">
-                <label for="mom_tvl_growth">MoM TVL Growth</label>
-            </div>
-            <div class="input-container">
-                <input type="number" id="mom_borrow_growth" step="0.001" placeholder=" ">
-                <label for="mom_borrow_growth">MoM Borrow Growth</label>
-            </div>
-            <div class="input-container">
-                <input type="number" id="base_monthly_emissions_rate" step="0.0001" placeholder=" ">
-                <label for="base_monthly_emissions_rate">Base Monthly Emissions Rate</label>
-            </div>
-            <div class="input-container">
-                <input type="number" id="emissions_step_up" step="0.01" placeholder=" ">
-                <label for="emissions_step_up">Emissions Step Up</label>
-            </div>
-            <div class="input-container">
-                <input type="number" id="total_team_allocation" placeholder=" ">
-                <label for="total_team_allocation">Total Team Allocation</label>
-            </div>
-            <div class="input-container">
-                <input type="number" id="cliff" placeholder=" ">
-                <label for="cliff">Cliff (in months)</label>
-            </div>
-            <div class="input-container">
-                <input type="number" id="vesting_months" placeholder=" ">
-                <label for="vesting_months">Vesting Months</label>
-            </div>
-            <div class="input-container">
-                <input type="number" id="base_vesting_per_month" step="0.0001" placeholder=" ">
-                <label for="base_vesting_per_month">Base Vesting per Month</label>
-            </div>
-            <div class="input-container">
-                <input type="number" id="vesting_step_up" step="0.01" placeholder=" ">
-                <label for="vesting_step_up">Vesting Step Up</label>
-            </div>
-            <div class="input-container">
-                <input type="number" id="monthly_liquidations" step="0.00001" placeholder=" ">
-                <label for="monthly_liquidations">Monthly Liquidations (% of TVL)</label>
-            </div>
-            <div class="input-container">
-                <input type="number" id="monthly_sequencer_fees" step="0.00001" placeholder=" ">
-                <label for="monthly_sequencer_fees">Monthly Sequencer Fees (% of TVL)</label>
-            </div>
-            <div class="input-container">
-                <input type="number" id="base_rate" step="0.0001" placeholder=" ">
-                <label for="base_rate">Base Rate</label>
-            </div>
-            <div class="input-container">
-                <input type="number" id="multiplier" step="0.01" placeholder=" ">
-                <label for="multiplier">Multiplier</label>
-            </div>
-            <div class="input-container">
-                <input type="number" id="kink" step="0.01" placeholder=" ">
-                <label for="kink">Kink</label>
-            </div>
-            <div class="input-container">
-                <input type="number" id="jump_multiplier" step="0.01" placeholder=" ">
-                <label for="jump_multiplier">Jump Multiplier</label>
-            </div>
-        </div>
-    </div>    
-
-    <div id="fund-raising" class="tab-content">
+    <div id="fund-raising" class="sub-tab-content">
         <h2>Fund Raising</h2>
         <div id="fund-raising-inputs">
             <h3>Basic Token Parameters for a Fixed Supply</h3>
@@ -667,7 +555,131 @@
         <button onclick="generateFundRaisingCharts()">Generate Charts</button>
         <div id="pie-chart"></div>
         <div id="vesting-chart"></div>
-    </div>   
+    </div>
+
+    <div id="tokenomics" class="sub-tab-content">
+        <h2>Tokenomics Builder</h2>
+        <div id="basic-inputs">
+            <h3>Protocol Metrics</h3>
+            <div class="input-container">
+                <input type="number" id="initial_tvl" placeholder=" ">
+                <label for="initial_tvl">Initial TVL ($)</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="initial_borrow" placeholder=" ">
+                <label for="initial_borrow">Initial Borrow ($)</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="initial_token_circulating" placeholder=" ">
+                <label for="initial_token_circulating">Token Circulating Supply</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="total_token_emitted" placeholder=" ">
+                <label for="total_token_emitted">Total Tokens To be Emitted</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="initial_reserves" placeholder=" ">
+                <label for="initial_reserves">Initial Reserves ($)</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="token_price" step="0.0001" placeholder=" ">
+                <label for="token_price">Initial Token Price ($)</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="protocol_revenue_share" step="0.01" placeholder=" ">
+                <label for="protocol_revenue_share">Protocol Revenue Share</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="target_utilization" step="0.01" placeholder=" ">
+                <label for="target_utilization">Target Utilization</label>
+            </div>
+        </div>
+
+        <div id="scenario-buttons">
+            <button class="scenario-button" onclick="setScenario('bear')">Bear</button>
+            <button class="scenario-button" onclick="setScenario('base')">Base</button>
+            <button class="scenario-button" onclick="setScenario('bull')">Bull</button>
+        </div>
+        <button onclick="runTokenomicsSimulation()">Run Simulation</button>
+
+        <div id="tokenomics-chart"></div>
+
+        <button onclick="toggleAdvancedFeatures()">Advanced Features</button>
+    
+        <div id="advanced-inputs" style="display: none;">
+            
+            <div class="input-container">
+                <input type="number" id="num_simulations" placeholder=" ">
+                <label for="num_simulations">Number of Simulations</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="num_months" placeholder=" ">
+                <label for="num_months">Number of Months</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="mom_tvl_growth" step="0.001" placeholder=" ">
+                <label for="mom_tvl_growth">MoM TVL Growth</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="mom_borrow_growth" step="0.001" placeholder=" ">
+                <label for="mom_borrow_growth">MoM Borrow Growth</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="base_monthly_emissions_rate" step="0.0001" placeholder=" ">
+                <label for="base_monthly_emissions_rate">Base Monthly Emissions Rate</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="emissions_step_up" step="0.01" placeholder=" ">
+                <label for="emissions_step_up">Emissions Step Up</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="total_team_allocation" placeholder=" ">
+                <label for="total_team_allocation">Total Team Allocation</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="cliff" placeholder=" ">
+                <label for="cliff">Cliff (in months)</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="vesting_months" placeholder=" ">
+                <label for="vesting_months">Vesting Months</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="base_vesting_per_month" step="0.0001" placeholder=" ">
+                <label for="base_vesting_per_month">Base Vesting per Month</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="vesting_step_up" step="0.01" placeholder=" ">
+                <label for="vesting_step_up">Vesting Step Up</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="monthly_liquidations" step="0.00001" placeholder=" ">
+                <label for="monthly_liquidations">Monthly Liquidations (% of TVL)</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="monthly_sequencer_fees" step="0.00001" placeholder=" ">
+                <label for="monthly_sequencer_fees">Monthly Sequencer Fees (% of TVL)</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="base_rate" step="0.0001" placeholder=" ">
+                <label for="base_rate">Base Rate</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="multiplier" step="0.01" placeholder=" ">
+                <label for="multiplier">Multiplier</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="kink" step="0.01" placeholder=" ">
+                <label for="kink">Kink</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="jump_multiplier" step="0.01" placeholder=" ">
+                <label for="jump_multiplier">Jump Multiplier</label>
+            </div>
+        </div>
+    </div>    
+
+       
         
     
 

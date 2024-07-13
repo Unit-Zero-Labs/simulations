@@ -205,483 +205,489 @@
             <button class="tab-button active" onclick="openTab(event, 'simulations')">Simulations</button>
             <button class="tab-button" onclick="openTab(event, 'tokenomics')">Tokenomics</button>
         </div>
+        
+        
+        <div id="simulations" class="tab-content" style="display:block;">
+            <div class="description-area">
+                <h2>DeFi Simulations</h2>
+                <p>This section contains simulations for various DeFi scenarios including lending, stable pools, and non-stable pools. These simulations help in understanding the dynamics of different DeFi protocols.</p>
+            </div>
+        
+            <div class="sub-tab-container">
+                <button class="sub-tab-button active" onclick="openSubTab(event, 'lending')">Lending</button>
+                <button class="sub-tab-button" onclick="openSubTab(event, 'stable')">Stable Pool</button>
+                <button class="sub-tab-button" onclick="openSubTab(event, 'non-stable')">Non-Stable Pool</button>
+            </div>
+
+        <div id="lending" class="sub-tab-content" style="display:block;">
+            <h2>Lending Simulation</h2>
+            <div class="input-container">
+                <input type="number" id="collateral-amount" placeholder=" ">
+                <label for="collateral-amount">Collateral Amount</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="max-ltv" placeholder=" ">
+                <label for="max-ltv">Max LTV</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="liquidation-threshold" placeholder=" ">
+                <label for="liquidation-threshold">Liquidation Threshold</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="total-deposits" placeholder=" ">
+                <label for="total-deposits">Total Deposits</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="interest-rate" step="0.01" placeholder=" ">
+                <label for="interest-rate">Annual Interest Rate</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="liquidation-penalty" step="0.01" placeholder=" ">
+                <label for="liquidation-penalty">Liquidation Penalty</label>
+            </div>
+            <button onclick="runLendingSimulation()">Run Simulation</button>
+            <div id="lending-chart"></div>
+        </div>
+
+        <div id="stable" class="sub-tab-content">
+            <h2>Stable Pool Simulation</h2>
+            <div class="input-container">
+                <input type="number" id="stable-initial-price" placeholder=" ">
+                <label for="stable-initial-price">Initial Price</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="stable-alpha" placeholder=" ">
+                <label for="stable-alpha">Mean Reversion Rate</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="stable-gamma" placeholder=" ">
+                <label for="stable-gamma">Long-term Mean</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="stable-beta" placeholder=" ">
+                <label for="stable-beta">Volatility</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="stable-days" placeholder=" ">
+                <label for="stable-days">Simulation Days</label>
+            </div>
+            <button onclick="runStablePoolSimulation()">Run Simulation</button>
+            <div id="stable-chart"></div>
+        </div>
+        
+        <div id="non-stable" class="sub-tab-content">
+            <h2>Non-Stable Pool Simulation</h2>
+            <div class="input-container">
+                <input type="number" id="non-stable-initial-price" placeholder=" ">
+                <label for="non-stable-initial-price">Initial Price</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="non-stable-mu" placeholder=" ">
+                <label for="non-stable-mu">Drift</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="non-stable-sigma" placeholder=" ">
+                <label for="non-stable-sigma">Volatility</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="non-stable-paths" placeholder=" ">
+                <label for="non-stable-paths">Number of Paths</label>
+            </div>
+            <button onclick="runNonStablePoolSimulation()">Run Simulation</button>
+            <div id="non-stable-chart"></div>
+        </div>
     </div>
-    
-    <div id="simulations" class="tab-content" style="display:block;">
+    <div id="tokenomics" class="tab-content">
         <div class="description-area">
-            <h2>DeFi Simulations</h2>
-            <p>This section contains simulations for various DeFi scenarios including lending, stable pools, and non-stable pools. These simulations help in understanding the dynamics of different DeFi protocols.</p>
-        </div>
-    
-        <div class="sub-tab-container">
-            <button class="sub-tab-button active" onclick="openSubTab(event, 'lending')">Lending</button>
-            <button class="sub-tab-button" onclick="openSubTab(event, 'stable')">Stable Pool</button>
-            <button class="sub-tab-button" onclick="openSubTab(event, 'non-stable')">Non-Stable Pool</button>
-        </div>
+            <h2>Tokenomics and Fund Raising</h2>
+            <p>Design and simulate token economics and fund raising strategies. Use the Fund Raising tab to set initial parameters, which will then feed into the Tokenomics Builder for advanced simulations.</p>
+      
 
-    <div id="lending" class="sub-tab-content" style="display:block;">
-        <h2>Lending Simulation</h2>
-        <div class="input-container">
-            <input type="number" id="collateral-amount" placeholder=" ">
-            <label for="collateral-amount">Collateral Amount</label>
-        </div>
-        <div class="input-container">
-            <input type="number" id="max-ltv" placeholder=" ">
-            <label for="max-ltv">Max LTV</label>
-        </div>
-        <div class="input-container">
-            <input type="number" id="liquidation-threshold" placeholder=" ">
-            <label for="liquidation-threshold">Liquidation Threshold</label>
-        </div>
-        <div class="input-container">
-            <input type="number" id="total-deposits" placeholder=" ">
-            <label for="total-deposits">Total Deposits</label>
-        </div>
-        <div class="input-container">
-            <input type="number" id="interest-rate" step="0.01" placeholder=" ">
-            <label for="interest-rate">Annual Interest Rate</label>
-        </div>
-        <div class="input-container">
-            <input type="number" id="liquidation-penalty" step="0.01" placeholder=" ">
-            <label for="liquidation-penalty">Liquidation Penalty</label>
-        </div>
-        <button onclick="runLendingSimulation()">Run Simulation</button>
-        <div id="lending-chart"></div>
-    </div>
+        <div id="fund-raising" class="sub-tab-content">
+            <h2>Fund Raising</h2>
+            <div id="fund-raising-inputs">
+                <h3>Basic Token Parameters for a Fixed Supply</h3>
+                <div class="input-container">
+                    <input type="number" id="initial-total-supply" placeholder=" ">
+                    <label for="initial-total-supply">Initial Total Supply of Tokens</label>
+                </div>
+                <div class="input-container">
+                    <input type="number" id="public-sale-percentage" step="0.01" placeholder=" ">
+                    <label for="public-sale-percentage">% Public Sale of Supply (up to)</label>
+                </div>
+                <div class="input-container">
+                    <input type="number" id="public-sale-valuation" placeholder=" ">
+                    <label for="public-sale-valuation">Public Sale Valuation ($)</label>
+                </div>
+                <div class="input-container">
+                    <input type="number" id="equity-owned" step="0.01" placeholder=" ">
+                    <label for="equity-owned">Equity Owned by External Shareholders (%)</label>
+                </div>
 
-    <div id="stable" class="sub-tab-content">
-        <h2>Stable Pool Simulation</h2>
-        <div class="input-container">
-            <input type="number" id="stable-initial-price" placeholder=" ">
-            <label for="stable-initial-price">Initial Price</label>
-        </div>
-        <div class="input-container">
-            <input type="number" id="stable-alpha" placeholder=" ">
-            <label for="stable-alpha">Mean Reversion Rate</label>
-        </div>
-        <div class="input-container">
-            <input type="number" id="stable-gamma" placeholder=" ">
-            <label for="stable-gamma">Long-term Mean</label>
-        </div>
-        <div class="input-container">
-            <input type="number" id="stable-beta" placeholder=" ">
-            <label for="stable-beta">Volatility</label>
-        </div>
-        <div class="input-container">
-            <input type="number" id="stable-days" placeholder=" ">
-            <label for="stable-days">Simulation Days</label>
-        </div>
-        <button onclick="runStablePoolSimulation()">Run Simulation</button>
-        <div id="stable-chart"></div>
-    </div>
-    
-    <div id="non-stable" class="sub-tab-content">
-        <h2>Non-Stable Pool Simulation</h2>
-        <div class="input-container">
-            <input type="number" id="non-stable-initial-price" placeholder=" ">
-            <label for="non-stable-initial-price">Initial Price</label>
-        </div>
-        <div class="input-container">
-            <input type="number" id="non-stable-mu" placeholder=" ">
-            <label for="non-stable-mu">Drift</label>
-        </div>
-        <div class="input-container">
-            <input type="number" id="non-stable-sigma" placeholder=" ">
-            <label for="non-stable-sigma">Volatility</label>
-        </div>
-        <div class="input-container">
-            <input type="number" id="non-stable-paths" placeholder=" ">
-            <label for="non-stable-paths">Number of Paths</label>
-        </div>
-        <button onclick="runNonStablePoolSimulation()">Run Simulation</button>
-        <div id="non-stable-chart"></div>
-    </div>
-
-    <div id="fund-raising" class="sub-tab-content">
-        <h2>Fund Raising</h2>
-        <div id="fund-raising-inputs">
-            <h3>Basic Token Parameters for a Fixed Supply</h3>
-            <div class="input-container">
-                <input type="number" id="initial-total-supply" placeholder=" ">
-                <label for="initial-total-supply">Initial Total Supply of Tokens</label>
-            </div>
-            <div class="input-container">
-                <input type="number" id="public-sale-percentage" step="0.01" placeholder=" ">
-                <label for="public-sale-percentage">% Public Sale of Supply (up to)</label>
-            </div>
-            <div class="input-container">
-                <input type="number" id="public-sale-valuation" placeholder=" ">
-                <label for="public-sale-valuation">Public Sale Valuation ($)</label>
-            </div>
-            <div class="input-container">
-                <input type="number" id="equity-owned" step="0.01" placeholder=" ">
-                <label for="equity-owned">Equity Owned by External Shareholders (%)</label>
-            </div>
-
-            <h3>Initial Token Allocation & Vesting Schedule</h3>
-            <div class="table-container">
-                
-                <table id="allocation-table">
+                <h3>Initial Token Allocation & Vesting Schedule</h3>
+                <div class="table-container">
+                    
+                    <table id="allocation-table">
+                        <thead>
+                            <tr>
+                                <th>Allocation</th>
+                                <th>Percentage</th>
+                                <th>Tokens</th>
+                                <th>TGE Unlock %</th>
+                                <th>Cliff (months)</th>
+                                <th>Vesting Period (months)</th>
+                                <th>Monthly Vesting %</th>
+                                <th>Monthly Vesting Tokens</th>
+                                <th>Tokens at TGE</th>
+                                <th>Discount</th>
+                                <th>Vesting Start</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Strategic</td>
+                                <td><input type="number" class="percentage" step="0.01"></td>
+                                <td class="tokens"></td>
+                                <td><input type="number" class="tge-unlock" step="0.01"></td>
+                                <td><input type="number" class="cliff"></td>
+                                <td><input type="number" class="vesting-period"></td>
+                                <td class="monthly-vesting-percentage"></td>
+                                <td class="monthly-vesting-tokens"></td>
+                                <td class="tokens-at-tge"></td>
+                                <td><input type="number" class="discount" step="0.01"></td>
+                                <td><input type="month" class="vesting-start"></td>
+                            </tr>
+                            <tr>
+                                <td>Seed</td>
+                                <td><input type="number" class="percentage" step="0.01"></td>
+                                <td class="tokens"></td>
+                                <td><input type="number" class="tge-unlock" step="0.01"></td>
+                                <td><input type="number" class="cliff"></td>
+                                <td><input type="number" class="vesting-period"></td>
+                                <td class="monthly-vesting-percentage"></td>
+                                <td class="monthly-vesting-tokens"></td>
+                                <td class="tokens-at-tge"></td>
+                                <td><input type="number" class="discount" step="0.01"></td>
+                                <td><input type="month" class="vesting-start"></td>
+                            </tr>
+                            <tr>
+                                <td>Public Sale</td>
+                                <td><input type="number" class="percentage" step="0.01"></td>
+                                <td class="tokens"></td>
+                                <td><input type="number" class="tge-unlock" step="0.01"></td>
+                                <td><input type="number" class="cliff"></td>
+                                <td><input type="number" class="vesting-period"></td>
+                                <td class="monthly-vesting-percentage"></td>
+                                <td class="monthly-vesting-tokens"></td>
+                                <td class="tokens-at-tge"></td>
+                                <td><input type="number" class="discount" step="0.01"></td>
+                                <td><input type="month" class="vesting-start"></td>
+                            </tr>
+                            <tr>
+                                <td>Founders / Team</td>
+                                <td><input type="number" class="percentage" step="0.01"></td>
+                                <td class="tokens"></td>
+                                <td><input type="number" class="tge-unlock" step="0.01"></td>
+                                <td><input type="number" class="cliff"></td>
+                                <td><input type="number" class="vesting-period"></td>
+                                <td class="monthly-vesting-percentage"></td>
+                                <td class="monthly-vesting-tokens"></td>
+                                <td class="tokens-at-tge"></td>
+                                <td><input type="number" class="discount" step="0.01"></td>
+                                <td><input type="month" class="vesting-start"></td>
+                            </tr>
+                            <tr>
+                                <td>Advisors</td>
+                                <td><input type="number" class="percentage" step="0.01"></td>
+                                <td class="tokens"></td>
+                                <td><input type="number" class="tge-unlock" step="0.01"></td>
+                                <td><input type="number" class="cliff"></td>
+                                <td><input type="number" class="vesting-period"></td>
+                                <td class="monthly-vesting-percentage"></td>
+                                <td class="monthly-vesting-tokens"></td>
+                                <td class="tokens-at-tge"></td>
+                                <td><input type="number" class="discount" step="0.01"></td>
+                                <td><input type="month" class="vesting-start"></td>
+                            </tr>
+                            <tr>
+                                <td>Strategic Partners (BD)</td>
+                                <td><input type="number" class="percentage" step="0.01"></td>
+                                <td class="tokens"></td>
+                                <td><input type="number" class="tge-unlock" step="0.01"></td>
+                                <td><input type="number" class="cliff"></td>
+                                <td><input type="number" class="vesting-period"></td>
+                                <td class="monthly-vesting-percentage"></td>
+                                <td class="monthly-vesting-tokens"></td>
+                                <td class="tokens-at-tge"></td>
+                                <td><input type="number" class="discount" step="0.01"></td>
+                                <td><input type="month" class="vesting-start"></td>
+                            </tr>
+                            <tr>
+                                <td>Airdrop #1</td>
+                                <td><input type="number" class="percentage" step="0.01"></td>
+                                <td class="tokens"></td>
+                                <td><input type="number" class="tge-unlock" step="0.01"></td>
+                                <td><input type="number" class="cliff"></td>
+                                <td><input type="number" class="vesting-period"></td>
+                                <td class="monthly-vesting-percentage"></td>
+                                <td class="monthly-vesting-tokens"></td>
+                                <td class="tokens-at-tge"></td>
+                                <td><input type="number" class="discount" step="0.01"></td>
+                                <td><input type="month" class="vesting-start"></td>
+                            </tr>
+                            <tr>
+                                <td>GTM</td>
+                                <td><input type="number" class="percentage" step="0.01"></td>
+                                <td class="tokens"></td>
+                                <td><input type="number" class="tge-unlock" step="0.01"></td>
+                                <td><input type="number" class="cliff"></td>
+                                <td><input type="number" class="vesting-period"></td>
+                                <td class="monthly-vesting-percentage"></td>
+                                <td class="monthly-vesting-tokens"></td>
+                                <td class="tokens-at-tge"></td>
+                                <td><input type="number" class="discount" step="0.01"></td>
+                                <td><input type="month" class="vesting-start"></td>
+                            </tr>
+                            <tr>
+                                <td>Treasury</td>
+                                <td><input type="number" class="percentage" step="0.01"></td>
+                                <td class="tokens"></td>
+                                <td><input type="number" class="tge-unlock" step="0.01"></td>
+                                <td><input type="number" class="cliff"></td>
+                                <td><input type="number" class="vesting-period"></td>
+                                <td class="monthly-vesting-percentage"></td>
+                                <td class="monthly-vesting-tokens"></td>
+                                <td class="tokens-at-tge"></td>
+                                <td><input type="number" class="discount" step="0.01"></td>
+                                <td><input type="month" class="vesting-start"></td>
+                            </tr>
+                            <tr>
+                                <td>Incentivization</td>
+                                <td><input type="number" class="percentage" step="0.01"></td>
+                                <td class="tokens"></td>
+                                <td><input type="number" class="tge-unlock" step="0.01"></td>
+                                <td><input type="number" class="cliff"></td>
+                                <td><input type="number" class="vesting-period"></td>
+                                <td class="monthly-vesting-percentage"></td>
+                                <td class="monthly-vesting-tokens"></td>
+                                <td class="tokens-at-tge"></td>
+                                <td><input type="number" class="discount" step="0.01"></td>
+                                <td><input type="month" class="vesting-start"></td>
+                            </tr>
+                            <tr>
+                                <td>Emissions</td>
+                                <td><input type="number" class="percentage" step="0.01"></td>
+                                <td class="tokens"></td>
+                                <td><input type="number" class="tge-unlock" step="0.01"></td>
+                                <td><input type="number" class="cliff"></td>
+                                <td><input type="number" class="vesting-period"></td>
+                                <td class="monthly-vesting-percentage"></td>
+                                <td class="monthly-vesting-tokens"></td>
+                                <td class="tokens-at-tge"></td>
+                                <td><input type="number" class="discount" step="0.01"></td>
+                                <td><input type="month" class="vesting-start"></td>
+                            </tr>
+                            <tr>
+                                <td>Airdrop #2</td>
+                                <td><input type="number" class="percentage" step="0.01"></td>
+                                <td class="tokens"></td>
+                                <td><input type="number" class="tge-unlock" step="0.01"></td>
+                                <td><input type="number" class="cliff"></td>
+                                <td><input type="number" class="vesting-period"></td>
+                                <td class="monthly-vesting-percentage"></td>
+                                <td class="monthly-vesting-tokens"></td>
+                                <td class="tokens-at-tge"></td>
+                                <td><input type="number" class="discount" step="0.01"></td>
+                                <td><input type="month" class="vesting-start"></td>
+                            </tr>
+                            <tr>
+                                <td>Liquidity Pool</td>
+                                <td><input type="number" class="percentage" step="0.01"></td>
+                                <td class="tokens"></td>
+                                <td><input type="number" class="tge-unlock" step="0.01"></td>
+                                <td><input type="number" class="cliff"></td>
+                                <td><input type="number" class="vesting-period"></td>
+                                <td class="monthly-vesting-percentage"></td>
+                                <td class="monthly-vesting-tokens"></td>
+                                <td class="tokens-at-tge"></td>
+                                <td><input type="number" class="discount" step="0.01"></td>
+                                <td><input type="month" class="vesting-start"></td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td>Sum</td>
+                                <td id="total-percentage">100.00%</td>
+                                <td id="total-tokens"></td>
+                                <td colspan="8"></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>      
+                <h3>Airdrop Module</h3>
+                <div class="airdrop-container">
+                <table id="airdrop-module">
                     <thead>
                         <tr>
                             <th>Allocation</th>
                             <th>Percentage</th>
                             <th>Tokens</th>
-                            <th>TGE Unlock %</th>
-                            <th>Cliff (months)</th>
-                            <th>Vesting Period (months)</th>
-                            <th>Monthly Vesting %</th>
-                            <th>Monthly Vesting Tokens</th>
-                            <th>Tokens at TGE</th>
-                            <th>Discount</th>
-                            <th>Vesting Start</th>
+                            <th>Date 1</th>
+                            <th>Amount 1</th>
+                            <th>Date 2</th>
+                            <th>Amount 2</th>
+                            <th>Date 3</th>
+                            <th>Amount 3</th>
+                            <th>Check Sum</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td>Strategic</td>
-                            <td><input type="number" class="percentage" step="0.01"></td>
-                            <td class="tokens"></td>
-                            <td><input type="number" class="tge-unlock" step="0.01"></td>
-                            <td><input type="number" class="cliff"></td>
-                            <td><input type="number" class="vesting-period"></td>
-                            <td class="monthly-vesting-percentage"></td>
-                            <td class="monthly-vesting-tokens"></td>
-                            <td class="tokens-at-tge"></td>
-                            <td><input type="number" class="discount" step="0.01"></td>
-                            <td><input type="month" class="vesting-start"></td>
-                        </tr>
-                        <tr>
-                            <td>Seed</td>
-                            <td><input type="number" class="percentage" step="0.01"></td>
-                            <td class="tokens"></td>
-                            <td><input type="number" class="tge-unlock" step="0.01"></td>
-                            <td><input type="number" class="cliff"></td>
-                            <td><input type="number" class="vesting-period"></td>
-                            <td class="monthly-vesting-percentage"></td>
-                            <td class="monthly-vesting-tokens"></td>
-                            <td class="tokens-at-tge"></td>
-                            <td><input type="number" class="discount" step="0.01"></td>
-                            <td><input type="month" class="vesting-start"></td>
-                        </tr>
-                        <tr>
-                            <td>Public Sale</td>
-                            <td><input type="number" class="percentage" step="0.01"></td>
-                            <td class="tokens"></td>
-                            <td><input type="number" class="tge-unlock" step="0.01"></td>
-                            <td><input type="number" class="cliff"></td>
-                            <td><input type="number" class="vesting-period"></td>
-                            <td class="monthly-vesting-percentage"></td>
-                            <td class="monthly-vesting-tokens"></td>
-                            <td class="tokens-at-tge"></td>
-                            <td><input type="number" class="discount" step="0.01"></td>
-                            <td><input type="month" class="vesting-start"></td>
-                        </tr>
-                        <tr>
-                            <td>Founders / Team</td>
-                            <td><input type="number" class="percentage" step="0.01"></td>
-                            <td class="tokens"></td>
-                            <td><input type="number" class="tge-unlock" step="0.01"></td>
-                            <td><input type="number" class="cliff"></td>
-                            <td><input type="number" class="vesting-period"></td>
-                            <td class="monthly-vesting-percentage"></td>
-                            <td class="monthly-vesting-tokens"></td>
-                            <td class="tokens-at-tge"></td>
-                            <td><input type="number" class="discount" step="0.01"></td>
-                            <td><input type="month" class="vesting-start"></td>
-                        </tr>
-                        <tr>
-                            <td>Advisors</td>
-                            <td><input type="number" class="percentage" step="0.01"></td>
-                            <td class="tokens"></td>
-                            <td><input type="number" class="tge-unlock" step="0.01"></td>
-                            <td><input type="number" class="cliff"></td>
-                            <td><input type="number" class="vesting-period"></td>
-                            <td class="monthly-vesting-percentage"></td>
-                            <td class="monthly-vesting-tokens"></td>
-                            <td class="tokens-at-tge"></td>
-                            <td><input type="number" class="discount" step="0.01"></td>
-                            <td><input type="month" class="vesting-start"></td>
-                        </tr>
-                        <tr>
-                            <td>Strategic Partners (BD)</td>
-                            <td><input type="number" class="percentage" step="0.01"></td>
-                            <td class="tokens"></td>
-                            <td><input type="number" class="tge-unlock" step="0.01"></td>
-                            <td><input type="number" class="cliff"></td>
-                            <td><input type="number" class="vesting-period"></td>
-                            <td class="monthly-vesting-percentage"></td>
-                            <td class="monthly-vesting-tokens"></td>
-                            <td class="tokens-at-tge"></td>
-                            <td><input type="number" class="discount" step="0.01"></td>
-                            <td><input type="month" class="vesting-start"></td>
-                        </tr>
-                        <tr>
-                            <td>Airdrop #1</td>
-                            <td><input type="number" class="percentage" step="0.01"></td>
-                            <td class="tokens"></td>
-                            <td><input type="number" class="tge-unlock" step="0.01"></td>
-                            <td><input type="number" class="cliff"></td>
-                            <td><input type="number" class="vesting-period"></td>
-                            <td class="monthly-vesting-percentage"></td>
-                            <td class="monthly-vesting-tokens"></td>
-                            <td class="tokens-at-tge"></td>
-                            <td><input type="number" class="discount" step="0.01"></td>
-                            <td><input type="month" class="vesting-start"></td>
-                        </tr>
-                        <tr>
-                            <td>GTM</td>
-                            <td><input type="number" class="percentage" step="0.01"></td>
-                            <td class="tokens"></td>
-                            <td><input type="number" class="tge-unlock" step="0.01"></td>
-                            <td><input type="number" class="cliff"></td>
-                            <td><input type="number" class="vesting-period"></td>
-                            <td class="monthly-vesting-percentage"></td>
-                            <td class="monthly-vesting-tokens"></td>
-                            <td class="tokens-at-tge"></td>
-                            <td><input type="number" class="discount" step="0.01"></td>
-                            <td><input type="month" class="vesting-start"></td>
-                        </tr>
-                        <tr>
-                            <td>Treasury</td>
-                            <td><input type="number" class="percentage" step="0.01"></td>
-                            <td class="tokens"></td>
-                            <td><input type="number" class="tge-unlock" step="0.01"></td>
-                            <td><input type="number" class="cliff"></td>
-                            <td><input type="number" class="vesting-period"></td>
-                            <td class="monthly-vesting-percentage"></td>
-                            <td class="monthly-vesting-tokens"></td>
-                            <td class="tokens-at-tge"></td>
-                            <td><input type="number" class="discount" step="0.01"></td>
-                            <td><input type="month" class="vesting-start"></td>
-                        </tr>
-                        <tr>
-                            <td>Incentivization</td>
-                            <td><input type="number" class="percentage" step="0.01"></td>
-                            <td class="tokens"></td>
-                            <td><input type="number" class="tge-unlock" step="0.01"></td>
-                            <td><input type="number" class="cliff"></td>
-                            <td><input type="number" class="vesting-period"></td>
-                            <td class="monthly-vesting-percentage"></td>
-                            <td class="monthly-vesting-tokens"></td>
-                            <td class="tokens-at-tge"></td>
-                            <td><input type="number" class="discount" step="0.01"></td>
-                            <td><input type="month" class="vesting-start"></td>
-                        </tr>
-                        <tr>
-                            <td>Emissions</td>
-                            <td><input type="number" class="percentage" step="0.01"></td>
-                            <td class="tokens"></td>
-                            <td><input type="number" class="tge-unlock" step="0.01"></td>
-                            <td><input type="number" class="cliff"></td>
-                            <td><input type="number" class="vesting-period"></td>
-                            <td class="monthly-vesting-percentage"></td>
-                            <td class="monthly-vesting-tokens"></td>
-                            <td class="tokens-at-tge"></td>
-                            <td><input type="number" class="discount" step="0.01"></td>
-                            <td><input type="month" class="vesting-start"></td>
-                        </tr>
-                        <tr>
                             <td>Airdrop #2</td>
-                            <td><input type="number" class="percentage" step="0.01"></td>
-                            <td class="tokens"></td>
-                            <td><input type="number" class="tge-unlock" step="0.01"></td>
-                            <td><input type="number" class="cliff"></td>
-                            <td><input type="number" class="vesting-period"></td>
-                            <td class="monthly-vesting-percentage"></td>
-                            <td class="monthly-vesting-tokens"></td>
-                            <td class="tokens-at-tge"></td>
-                            <td><input type="number" class="discount" step="0.01"></td>
-                            <td><input type="month" class="vesting-start"></td>
-                        </tr>
-                        <tr>
-                            <td>Liquidity Pool</td>
-                            <td><input type="number" class="percentage" step="0.01"></td>
-                            <td class="tokens"></td>
-                            <td><input type="number" class="tge-unlock" step="0.01"></td>
-                            <td><input type="number" class="cliff"></td>
-                            <td><input type="number" class="vesting-period"></td>
-                            <td class="monthly-vesting-percentage"></td>
-                            <td class="monthly-vesting-tokens"></td>
-                            <td class="tokens-at-tge"></td>
-                            <td><input type="number" class="discount" step="0.01"></td>
-                            <td><input type="month" class="vesting-start"></td>
+                            <td id="airdrop2-percentage"></td>
+                            <td id="airdrop2-tokens"></td>
+                            <td><input type="date" id="airdrop2-date1"></td>
+                            <td><input type="number" id="airdrop2-amount1" step="0.01"></td>
+                            <td><input type="date" id="airdrop2-date2"></td>
+                            <td><input type="number" id="airdrop2-amount2" step="0.01"></td>
+                            <td><input type="date" id="airdrop2-date3"></td>
+                            <td><input type="number" id="airdrop2-amount3" step="0.01"></td>
+                            <td id="airdrop2-check-sum"></td>
                         </tr>
                     </tbody>
-                    <tfoot>
-                        <tr>
-                            <td>Sum</td>
-                            <td id="total-percentage">100.00%</td>
-                            <td id="total-tokens"></td>
-                            <td colspan="8"></td>
-                        </tr>
-                    </tfoot>
                 </table>
-            </div>      
-            <h3>Airdrop Module</h3>
-            <div class="airdrop-container">
-            <table id="airdrop-module">
-                <thead>
-                    <tr>
-                        <th>Allocation</th>
-                        <th>Percentage</th>
-                        <th>Tokens</th>
-                        <th>Date 1</th>
-                        <th>Amount 1</th>
-                        <th>Date 2</th>
-                        <th>Amount 2</th>
-                        <th>Date 3</th>
-                        <th>Amount 3</th>
-                        <th>Check Sum</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Airdrop #2</td>
-                        <td id="airdrop2-percentage"></td>
-                        <td id="airdrop2-tokens"></td>
-                        <td><input type="date" id="airdrop2-date1"></td>
-                        <td><input type="number" id="airdrop2-amount1" step="0.01"></td>
-                        <td><input type="date" id="airdrop2-date2"></td>
-                        <td><input type="number" id="airdrop2-amount2" step="0.01"></td>
-                        <td><input type="date" id="airdrop2-date3"></td>
-                        <td><input type="number" id="airdrop2-amount3" step="0.01"></td>
-                        <td id="airdrop2-check-sum"></td>
-                    </tr>
-                </tbody>
-            </table>
+                </div>
             </div>
-        </div>
-        <button onclick="generateFundRaisingCharts()">Generate Charts</button>
-        <div id="pie-chart"></div>
-        <div id="vesting-chart"></div>
-    </div>
-
-    <div id="tokenomics" class="sub-tab-content">
-        <h2>Tokenomics Builder</h2>
-        <div id="basic-inputs">
-            <h3>Protocol Metrics</h3>
-            <div class="input-container">
-                <input type="number" id="initial_tvl" placeholder=" ">
-                <label for="initial_tvl">Initial TVL ($)</label>
-            </div>
-            <div class="input-container">
-                <input type="number" id="initial_borrow" placeholder=" ">
-                <label for="initial_borrow">Initial Borrow ($)</label>
-            </div>
-            <div class="input-container">
-                <input type="number" id="initial_token_circulating" placeholder=" ">
-                <label for="initial_token_circulating">Token Circulating Supply</label>
-            </div>
-            <div class="input-container">
-                <input type="number" id="total_token_emitted" placeholder=" ">
-                <label for="total_token_emitted">Total Tokens To be Emitted</label>
-            </div>
-            <div class="input-container">
-                <input type="number" id="initial_reserves" placeholder=" ">
-                <label for="initial_reserves">Initial Reserves ($)</label>
-            </div>
-            <div class="input-container">
-                <input type="number" id="token_price" step="0.0001" placeholder=" ">
-                <label for="token_price">Initial Token Price ($)</label>
-            </div>
-            <div class="input-container">
-                <input type="number" id="protocol_revenue_share" step="0.01" placeholder=" ">
-                <label for="protocol_revenue_share">Protocol Revenue Share</label>
-            </div>
-            <div class="input-container">
-                <input type="number" id="target_utilization" step="0.01" placeholder=" ">
-                <label for="target_utilization">Target Utilization</label>
-            </div>
+            <button onclick="generateFundRaisingCharts()">Generate Charts</button>
+            <div id="pie-chart"></div>
+            <div id="vesting-chart"></div>
         </div>
 
-        <div id="scenario-buttons">
-            <button class="scenario-button" onclick="setScenario('bear')">Bear</button>
-            <button class="scenario-button" onclick="setScenario('base')">Base</button>
-            <button class="scenario-button" onclick="setScenario('bull')">Bull</button>
-        </div>
-        <button onclick="runTokenomicsSimulation()">Run Simulation</button>
+        <div id="tokenomics" class="sub-tab-content">
+            <h2>Tokenomics Builder</h2>
+            <div id="basic-inputs">
+                <h3>Protocol Metrics</h3>
+                <div class="input-container">
+                    <input type="number" id="initial_tvl" placeholder=" ">
+                    <label for="initial_tvl">Initial TVL ($)</label>
+                </div>
+                <div class="input-container">
+                    <input type="number" id="initial_borrow" placeholder=" ">
+                    <label for="initial_borrow">Initial Borrow ($)</label>
+                </div>
+                <div class="input-container">
+                    <input type="number" id="initial_token_circulating" placeholder=" ">
+                    <label for="initial_token_circulating">Token Circulating Supply</label>
+                </div>
+                <div class="input-container">
+                    <input type="number" id="total_token_emitted" placeholder=" ">
+                    <label for="total_token_emitted">Total Tokens To be Emitted</label>
+                </div>
+                <div class="input-container">
+                    <input type="number" id="initial_reserves" placeholder=" ">
+                    <label for="initial_reserves">Initial Reserves ($)</label>
+                </div>
+                <div class="input-container">
+                    <input type="number" id="token_price" step="0.0001" placeholder=" ">
+                    <label for="token_price">Initial Token Price ($)</label>
+                </div>
+                <div class="input-container">
+                    <input type="number" id="protocol_revenue_share" step="0.01" placeholder=" ">
+                    <label for="protocol_revenue_share">Protocol Revenue Share</label>
+                </div>
+                <div class="input-container">
+                    <input type="number" id="target_utilization" step="0.01" placeholder=" ">
+                    <label for="target_utilization">Target Utilization</label>
+                </div>
+            </div>
 
-        <div id="tokenomics-chart"></div>
+            <div id="scenario-buttons">
+                <button class="scenario-button" onclick="setScenario('bear')">Bear</button>
+                <button class="scenario-button" onclick="setScenario('base')">Base</button>
+                <button class="scenario-button" onclick="setScenario('bull')">Bull</button>
+            </div>
+            <button onclick="runTokenomicsSimulation()">Run Simulation</button>
 
-        <button onclick="toggleAdvancedFeatures()">Advanced Features</button>
-    
-        <div id="advanced-inputs" style="display: none;">
-            
-            <div class="input-container">
-                <input type="number" id="num_simulations" placeholder=" ">
-                <label for="num_simulations">Number of Simulations</label>
-            </div>
-            <div class="input-container">
-                <input type="number" id="num_months" placeholder=" ">
-                <label for="num_months">Number of Months</label>
-            </div>
-            <div class="input-container">
-                <input type="number" id="mom_tvl_growth" step="0.001" placeholder=" ">
-                <label for="mom_tvl_growth">MoM TVL Growth</label>
-            </div>
-            <div class="input-container">
-                <input type="number" id="mom_borrow_growth" step="0.001" placeholder=" ">
-                <label for="mom_borrow_growth">MoM Borrow Growth</label>
-            </div>
-            <div class="input-container">
-                <input type="number" id="base_monthly_emissions_rate" step="0.0001" placeholder=" ">
-                <label for="base_monthly_emissions_rate">Base Monthly Emissions Rate</label>
-            </div>
-            <div class="input-container">
-                <input type="number" id="emissions_step_up" step="0.01" placeholder=" ">
-                <label for="emissions_step_up">Emissions Step Up</label>
-            </div>
-            <div class="input-container">
-                <input type="number" id="total_team_allocation" placeholder=" ">
-                <label for="total_team_allocation">Total Team Allocation</label>
-            </div>
-            <div class="input-container">
-                <input type="number" id="cliff" placeholder=" ">
-                <label for="cliff">Cliff (in months)</label>
-            </div>
-            <div class="input-container">
-                <input type="number" id="vesting_months" placeholder=" ">
-                <label for="vesting_months">Vesting Months</label>
-            </div>
-            <div class="input-container">
-                <input type="number" id="base_vesting_per_month" step="0.0001" placeholder=" ">
-                <label for="base_vesting_per_month">Base Vesting per Month</label>
-            </div>
-            <div class="input-container">
-                <input type="number" id="vesting_step_up" step="0.01" placeholder=" ">
-                <label for="vesting_step_up">Vesting Step Up</label>
-            </div>
-            <div class="input-container">
-                <input type="number" id="monthly_liquidations" step="0.00001" placeholder=" ">
-                <label for="monthly_liquidations">Monthly Liquidations (% of TVL)</label>
-            </div>
-            <div class="input-container">
-                <input type="number" id="monthly_sequencer_fees" step="0.00001" placeholder=" ">
-                <label for="monthly_sequencer_fees">Monthly Sequencer Fees (% of TVL)</label>
-            </div>
-            <div class="input-container">
-                <input type="number" id="base_rate" step="0.0001" placeholder=" ">
-                <label for="base_rate">Base Rate</label>
-            </div>
-            <div class="input-container">
-                <input type="number" id="multiplier" step="0.01" placeholder=" ">
-                <label for="multiplier">Multiplier</label>
-            </div>
-            <div class="input-container">
-                <input type="number" id="kink" step="0.01" placeholder=" ">
-                <label for="kink">Kink</label>
-            </div>
-            <div class="input-container">
-                <input type="number" id="jump_multiplier" step="0.01" placeholder=" ">
-                <label for="jump_multiplier">Jump Multiplier</label>
-            </div>
-        </div>
-    </div>    
+            <div id="tokenomics-chart"></div>
 
-       
+            <button onclick="toggleAdvancedFeatures()">Advanced Features</button>
         
-    
+            <div id="advanced-inputs" style="display: none;">
+                
+                <div class="input-container">
+                    <input type="number" id="num_simulations" placeholder=" ">
+                    <label for="num_simulations">Number of Simulations</label>
+                </div>
+                <div class="input-container">
+                    <input type="number" id="num_months" placeholder=" ">
+                    <label for="num_months">Number of Months</label>
+                </div>
+                <div class="input-container">
+                    <input type="number" id="mom_tvl_growth" step="0.001" placeholder=" ">
+                    <label for="mom_tvl_growth">MoM TVL Growth</label>
+                </div>
+                <div class="input-container">
+                    <input type="number" id="mom_borrow_growth" step="0.001" placeholder=" ">
+                    <label for="mom_borrow_growth">MoM Borrow Growth</label>
+                </div>
+                <div class="input-container">
+                    <input type="number" id="base_monthly_emissions_rate" step="0.0001" placeholder=" ">
+                    <label for="base_monthly_emissions_rate">Base Monthly Emissions Rate</label>
+                </div>
+                <div class="input-container">
+                    <input type="number" id="emissions_step_up" step="0.01" placeholder=" ">
+                    <label for="emissions_step_up">Emissions Step Up</label>
+                </div>
+                <div class="input-container">
+                    <input type="number" id="total_team_allocation" placeholder=" ">
+                    <label for="total_team_allocation">Total Team Allocation</label>
+                </div>
+                <div class="input-container">
+                    <input type="number" id="cliff" placeholder=" ">
+                    <label for="cliff">Cliff (in months)</label>
+                </div>
+                <div class="input-container">
+                    <input type="number" id="vesting_months" placeholder=" ">
+                    <label for="vesting_months">Vesting Months</label>
+                </div>
+                <div class="input-container">
+                    <input type="number" id="base_vesting_per_month" step="0.0001" placeholder=" ">
+                    <label for="base_vesting_per_month">Base Vesting per Month</label>
+                </div>
+                <div class="input-container">
+                    <input type="number" id="vesting_step_up" step="0.01" placeholder=" ">
+                    <label for="vesting_step_up">Vesting Step Up</label>
+                </div>
+                <div class="input-container">
+                    <input type="number" id="monthly_liquidations" step="0.00001" placeholder=" ">
+                    <label for="monthly_liquidations">Monthly Liquidations (% of TVL)</label>
+                </div>
+                <div class="input-container">
+                    <input type="number" id="monthly_sequencer_fees" step="0.00001" placeholder=" ">
+                    <label for="monthly_sequencer_fees">Monthly Sequencer Fees (% of TVL)</label>
+                </div>
+                <div class="input-container">
+                    <input type="number" id="base_rate" step="0.0001" placeholder=" ">
+                    <label for="base_rate">Base Rate</label>
+                </div>
+                <div class="input-container">
+                    <input type="number" id="multiplier" step="0.01" placeholder=" ">
+                    <label for="multiplier">Multiplier</label>
+                </div>
+                <div class="input-container">
+                    <input type="number" id="kink" step="0.01" placeholder=" ">
+                    <label for="kink">Kink</label>
+                </div>
+                <div class="input-container">
+                    <input type="number" id="jump_multiplier" step="0.01" placeholder=" ">
+                    <label for="jump_multiplier">Jump Multiplier</label>
+                </div>
+            </div>
+        </div>    
+
+        
+        
+    </div>  
 
     <script>
         const plotlyLayout = {
@@ -735,6 +741,32 @@
             }
             document.getElementById(tabName).style.display = "block";
             evt.currentTarget.className += " active";
+
+            var firstSubTab = document.getElementById(tabName).getElementsByClassName("sub-tab-content")[0];
+            if (firstSubTab) {
+                openSubTab(null, firstSubTab.id);
+            }
+        }
+
+        function openSubTab(evt, subTabName) {
+            var i, subtabcontent, subtablinks;
+            subtabcontent = document.getElementsByClassName("sub-tab-content");
+            for (i = 0; i < subtabcontent.length; i++) {
+                subtabcontent[i].style.display = "none";
+            }
+            subtablinks = document.getElementsByClassName("sub-tab-button");
+            for (i = 0; i < subtablinks.length; i++) {
+                subtablinks[i].className = subtablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(subTabName).style.display = "block";
+            if (evt) {
+                evt.currentTarget.className += " active";
+            } else {
+                var firstSubTabButton = document.querySelector(".sub-tab-button");
+                if (firstSubTabButton) {
+                    firstSubTabButton.className += " active";
+                }
+            }
         }
 
         function runLendingSimulation() {
@@ -1324,9 +1356,10 @@
             });
         }
 
+        document.addEventListener('DOMContentLoaded', function() {
+        openTab({currentTarget: document.querySelector('.tab-button')}, 'simulations');
+        });
+        </script>
         
-        document.addEventListener('DOMContentLoaded', initializeFundRaisingTab);
-    </script>
-    
 </body>
 </html>

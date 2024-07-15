@@ -1347,7 +1347,9 @@
                 body: JSON.stringify({
                     allocationData: allocationData,
                     vestingData: vestingData,
-                    airdropModule: airdropModule
+                    airdropModule: airdropModule,
+                    initialTotalSupply: parseFloat(document.getElementById('initial-total-supply').value),
+                    publicSaleValuation: parseFloat(document.getElementById('public-sale-valuation').value)
                 }),
             })
             .then(response => response.json())
@@ -1357,14 +1359,13 @@
             })
             .catch(error => {
                 console.error('Error generating charts:', error);
-            })
+            });
             sessionStorage.setItem('fundRaisingData', JSON.stringify({
             allocationData: allocationData,
             vestingData: vestingData,
             airdropModule: airdropModule
             }));
-            openSubTab({currentTarget: document.querySelector('.sub-tab-button[onclick*="lp-sim"]')}, 'lp-sim');
-
+           
         }
         
         

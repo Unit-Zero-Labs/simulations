@@ -8,12 +8,12 @@ fund_raising_bp = Blueprint('fund_raising', __name__)
 @fund_raising_bp.route('/generate_fund_raising_charts', methods=['POST'])
 def generate_fund_raising_charts():
     data = request.json
-    fund_raising = FundRaising(data['allocationData'], data['vestingData'], data['airdropModule'])
+    fund_raising = FundRaising(
+        data['allocationData'],
+        data['vestingData'],
+        data['airdropModule'],
+        float(data['initialTotalSupply']),
+        float(data['publicSaleValuation'])
+    )
     
-    pie_chart = fund_raising.generate_pie_chart()
-    vesting_chart = fund_raising.generate_vesting_chart()
-    
-    return jsonify({
-        'pie_chart': pie_chart.to_json(),
-        'vesting_chart': vesting_chart.to_json()
-    })
+    return jsonify(fund_raising.generate_charts())

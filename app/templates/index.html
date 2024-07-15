@@ -556,13 +556,56 @@
             <div id="pie-chart"></div>
             <div id="vesting-chart"></div>
         </div>
+
         <div id="lp-sim" class="sub-tab-content">
-            <h2>LP Sim</h2>
-            <div id="lp-sim-inputs">
-                <!-- LP Sim inputs will go here -->
+            <h2>LP Simulation</h2>
+            <div class="input-container">
+                <input type="number" id="lp-token-launch-price" placeholder=" ">
+                <label for="lp-token-launch-price">Token Launch Price</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="lp-pool-allocation" placeholder=" ">
+                <label for="lp-pool-allocation">LP Pool Allocation</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="lp-initial-total-supply" placeholder=" ">
+                <label for="lp-initial-total-supply">Initial Total Supply</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="lp-simulation-days" placeholder=" ">
+                <label for="lp-simulation-days">Simulation Days</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="lp-mu" step="0.01" placeholder=" ">
+                <label for="lp-mu">Mu (Drift)</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="lp-sigma" step="0.01" placeholder=" ">
+                <label for="lp-sigma">Sigma (Volatility)</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="lp-paths" placeholder=" ">
+                <label for="lp-paths">Number of Simulation Paths</label>
+            </div>
+            <h3>Token Holder Assumptions</h3>
+            <div class="input-container">
+                <input type="number" id="lp-token-adoption-velocity" step="0.01" placeholder=" ">
+                <label for="lp-token-adoption-velocity">Token Adoption Velocity</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="lp-avg-token-utility-allocation" step="1" placeholder=" ">
+                <label for="lp-avg-token-utility-allocation">Avg. Token Utility Allocation (%)</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="lp-avg-token-holding" step="1" placeholder=" ">
+                <label for="lp-avg-token-holding">Avg. Token Holding (%)</label>
+            </div>
+            <div class="input-container">
+                <input type="number" id="lp-avg-token-sell" step="1" placeholder=" ">
+                <label for="lp-avg-token-sell">Avg. Token Sell (%)</label>
             </div>
             <button onclick="runLPSimulation()">Run LP Simulation</button>
-            <div id="lp-sim-chart"></div>
+            <div id="lp-sim-charts"></div>
         </div>
         </div>
 
@@ -1361,18 +1404,160 @@
                 console.error('Error generating charts:', error);
             });
             sessionStorage.setItem('fundRaisingData', JSON.stringify({
-            allocationData: allocationData,
-            vestingData: vestingData,
-            airdropModule: airdropModule
+                initialTotalSupply: parseFloat(document.getElementById('initial-total-supply').value),
+                publicSaleValuation: parseFloat(document.getElementById('public-sale-valuation').value),
+                lpPoolAllocation: parseFloat(document.getElementById('lp-pool-allocation').value)
             }));
-           
+                
         }
         
         
         document.addEventListener('DOMContentLoaded', function() {
             initializeFundRaisingTab();
             openTab({currentTarget: document.querySelector('.tab-button')}, 'simulations');
-    });
+        });
+
+        function populateLPSimInputs() {
+            const fundRaisingData = JSON.parse(sessionStorage.getItem('fundRaisingData'));
+            if (fundRaisingData) {
+                document.getElementById('lp-token-launch-price').value = fundRaisingData.publicSaleValuation / (fundRaisingData.initialTotalSupply * 0.02); // Assuming 2% for public sale
+                document.getElementById('lp-pool-allocation').value = fundRaisingData.lpPoolAllocation;
+                document.getElementById('lp-initial-total-supply').value = fundRaisingData.initialTotalSupply;
+                document.getElementById('lp-simulation-days').value = 365;
+                document.getElementById('lp-mu').value = 0.1;
+                document.getElementById('lp-sigma').value = 0.5;
+                document.getElementById('lp-paths').value = 1000;
+                document.getElementById('lp-token-adoption-velocity').value = 0.5;
+                document.getElementById('lp-avg-token-utility-allocation').value = 65;
+                document.getElementById('lp-avg-token-holding').value = 5;
+                document.getElementById('lp-avg-token-sell').value = 30;
+            }
+        }
+
+        function runLPSimulation() {
+            const data = {
+                tokenLaunchPrice: parseFloat(document.getElementById('lp-token-launch-price').value),
+                lpPoolAllocation: parseFloat(document.getElementById('lp-pool-allocation').value),
+                initialTotalSupply: parseFloat(document.getElementById('lp-initial-total-supply').value),
+                simulationDays: parseInt(document.getElementById('lp-simulation-days').value),
+                mu: parseFloat(document.getElementById('lp-mu').value),
+                sigma: parseFloat(document.getElementById('lp-sigma').value),
+                paths: parseInt(document.getElementById('lp-paths').value),
+                tokenAdoptionVelocity: parseFloat(document.getElementById('lp-token-adoption-velocity').value),
+                avgTokenUtilityAllocation: parseFloat(document.getElementById('lp-avg-token-utility-allocation').value),
+                avgTokenHolding: parseFloat(document.getElementById('lp-avg-token-holding').value),
+                avgTokenSell: parseFloat(document.getElementById('lp-avg-token-sell').value)
+            };
+
+            fetch('/run_lp_simulation', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+            .then(response => response.json())
+            .then(data => {
+                createLPSimCharts(data);
+            })
+            .catch(error => {
+                console.error('Error running LP simulation:', error);
+            });
+        }
+        function createLPSimCharts(data) {
+            Plotly.newPlot('lp-sim-charts', [
+                {
+                    x: data.dates,
+                    y: data.median_prices,
+                    type: 'scatter',
+                    mode: 'lines',
+                    name: 'Median Price'
+                },
+                {
+                    x: data.dates.concat(data.dates.slice().reverse()),
+                    y: data.price_percentiles[3].concat(data.price_percentiles[1].slice().reverse()),
+                    fill: 'toself',
+                    fillcolor: 'rgba(0,100,80,0.2)',
+                    line: {color: 'transparent'},
+                    name: 'Price 25-75 Percentile'
+                },
+                {
+                    x: data.dates.concat(data.dates.slice().reverse()),
+                    y: data.price_percentiles[4].concat(data.price_percentiles[0].slice().reverse()),
+                    fill: 'toself',
+                    fillcolor: 'rgba(0,100,80,0.1)',
+                    line: {color: 'transparent'},
+                    name: 'Price 5-95 Percentile'
+                }
+            ], {
+                title: 'Token Price Simulation',
+                xaxis: {title: 'Date'},
+                yaxis: {title: 'Price'}
+            });
+
+            Plotly.newPlot('lp-sim-charts', [
+                {
+                    x: data.dates,
+                    y: data.median_tvl,
+                    type: 'scatter',
+                    mode: 'lines',
+                    name: 'Median TVL'
+                },
+                {
+                    x: data.dates.concat(data.dates.slice().reverse()),
+                    y: data.tvl_percentiles[3].concat(data.tvl_percentiles[1].slice().reverse()),
+                    fill: 'toself',
+                    fillcolor: 'rgba(0,100,80,0.2)',
+                    line: {color: 'transparent'},
+                    name: 'TVL 25-75 Percentile'
+                },
+                {
+                    x: data.dates.concat(data.dates.slice().reverse()),
+                    y: data.tvl_percentiles[4].concat(data.tvl_percentiles[0].slice().reverse()),
+                    fill: 'toself',
+                    fillcolor: 'rgba(0,100,80,0.1)',
+                    line: {color: 'transparent'},
+                    name: 'TVL 5-95 Percentile'
+                }
+            ], {
+                title: 'Total Value Locked (TVL) Simulation',
+                xaxis: {title: 'Date'},
+                yaxis: {title: 'TVL'}
+            });
+
+            Plotly.newPlot('lp-sim-charts', [
+                {
+                    x: data.dates,
+                    y: data.median_il,
+                    type: 'scatter',
+                    mode: 'lines',
+                    name: 'Median IL'
+                },
+                {
+                    x: data.dates.concat(data.dates.slice().reverse()),
+                    y: data.il_percentiles[3].concat(data.il_percentiles[1].slice().reverse()),
+                    fill: 'toself',
+                    fillcolor: 'rgba(0,100,80,0.2)',
+                    line: {color: 'transparent'},
+                    name: 'IL 25-75 Percentile'
+                },
+                {
+                    x: data.dates.concat(data.dates.slice().reverse()),
+                    y: data.il_percentiles[4].concat(data.il_percentiles[0].slice().reverse()),
+                    fill: 'toself',
+                    fillcolor: 'rgba(0,100,80,0.1)',
+                    line: {color: 'transparent'},
+                    name: 'IL 5-95 Percentile'
+                }
+            ], {
+                title: 'Impermanent Loss (IL) Simulation',
+                xaxis: {title: 'Date'},
+                yaxis: {title: 'IL', tickformat: '.2%'}
+            });
+        }
+
+        document.querySelector('.sub-tab-button[onclick*="lp-sim"]').addEventListener('click', populateLPSimInputs);
+
     </script>
         
 </body>

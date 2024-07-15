@@ -298,10 +298,11 @@
         </div>
     </div>
     <div id="tokenomics" class="tab-content">
-        <div class="description-area">
-            <h2>Tokenomics and Fund Raising</h2>
-            <p>Design and simulate token economics and fund raising strategies. Use the Fund Raising tab to set initial parameters, which will then feed into the Tokenomics Builder for advanced simulations.</p>
-      
+        <p>Design and simulate token economics and fund raising strategies. Use the Fund Raising tab to set initial parameters, which will then feed into the Tokenomics Builder for advanced simulations.</p>
+        <div class="sub-tab-container">
+            <button class="sub-tab-button" onclick="openSubTab(event, 'fund-raising')">Fund Raising</button>
+            <button class="sub-tab-button" onclick="openSubTab(event, 'lp-sim')">LP Sim</button>
+        </div>
 
         <div id="fund-raising" class="sub-tab-content">
             <h2>Fund Raising</h2>
@@ -562,7 +563,16 @@
             <div id="pie-chart"></div>
             <div id="vesting-chart"></div>
         </div>
+        <div id="lp-sim" class="sub-tab-content">
+            <h2>LP Sim</h2>
+            <div id="lp-sim-inputs">
+                <!-- LP Sim inputs will go here -->
+            </div>
+            <button onclick="runLPSimulation()">Run LP Simulation</button>
+            <div id="lp-sim-chart"></div>
         </div>
+        </div>
+
     </div>
     <div id="runway" class="tab-content">
         <h2>Runway Simulation</h2>
@@ -1354,9 +1364,16 @@
             })
             .catch(error => {
                 console.error('Error generating charts:', error);
-            });
-        }
+            })
+            sessionStorage.setItem('fundRaisingData', JSON.stringify({
+            allocationData: allocationData,
+            vestingData: vestingData,
+            airdropModule: airdropModule
+            }));
+            openSubTab({currentTarget: document.querySelector('.sub-tab-button[onclick*="lp-sim"]')}, 'lp-sim');
 
+        }
+        
         
         document.addEventListener('DOMContentLoaded', function() {
             initializeFundRaisingTab();

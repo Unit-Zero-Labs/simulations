@@ -840,9 +840,17 @@
             for (i = 0; i < subtablinks.length; i++) {
                 subtablinks[i].className = subtablinks[i].className.replace(" active", "");
             }
-            document.getElementById(subTabName).classList.add("active");
-            evt.currentTarget.classList.add("active");
-        }
+            document.getElementById(subTabName).style.display = "block";
+            
+            var activeSubTab = document.querySelector(`.sub-tab-button[onclick*="${subTabName}"]`);
+            if (activeSubTab) {
+                activeSubTab.classList.add("active");
+            }
+            
+            if (evt && evt.currentTarget) {
+                evt.currentTarget.classList.add("active");
+            }
+}
         
         
 
@@ -1372,16 +1380,27 @@
             const checkSum = amount1 + amount2 + amount3;
             document.getElementById('airdrop2-check-sum').textContent = checkSum.toFixed(2) + '%';
         }
-        
+
         document.addEventListener('DOMContentLoaded', function() {
             initializeFundRaisingTab();
             openTab({currentTarget: document.querySelector('.tab-button')}, 'simulations');
 
             document.querySelector('.tab-button[onclick*="tokenomics"]').addEventListener('click', function() {
-                document.getElementById('fund-raising').classList.add('active');
-                document.getElementById('lp-sim').classList.remove('active');
-                document.querySelector('.sub-tab-button[onclick*="fund-raising"]').classList.add('active');
-                document.querySelector('.sub-tab-button[onclick*="lp-sim"]').classList.remove('active');
+                openTab(event, 'tokenomics');
+                
+                openSubTab(null, 'fund-raising');
+            });
+
+            document.querySelectorAll('.sub-tab-button').forEach(button => {
+                button.addEventListener('click', function(event) {
+                    const subTabName = this.getAttribute('onclick').match(/'([^']+)'/)[1];
+                    openSubTab(event, subTabName);
+                });
+            });
+
+            document.querySelector('.sub-tab-button[onclick*="lp-sim"]').addEventListener('click', function(event) {
+                openSubTab(event, 'lp-sim');
+                populateLPSimInputs();
             });
         });
 

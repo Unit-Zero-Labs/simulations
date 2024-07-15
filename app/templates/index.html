@@ -1381,6 +1381,9 @@
                 date3: document.getElementById('airdrop2-date3').value,
                 amount3: parseFloat(document.getElementById('airdrop2-amount3').value) || 0
             };
+            const lpPoolAllocation = allocationData.find(item => item.allocation === "Liquidity Pool")?.percentage || 0;
+            const initialTotalSupply = parseFloat(document.getElementById('initial-total-supply').value);
+            const publicSaleValuation = parseFloat(document.getElementById('public-sale-valuation').value);
 
             fetch('/generate_fund_raising_charts', {
                 method: 'POST',
@@ -1391,24 +1394,25 @@
                     allocationData: allocationData,
                     vestingData: vestingData,
                     airdropModule: airdropModule,
-                    initialTotalSupply: parseFloat(document.getElementById('initial-total-supply').value),
-                    publicSaleValuation: parseFloat(document.getElementById('public-sale-valuation').value)
+                    initialTotalSupply: initialTotalSupply,
+                    publicSaleValuation: publicSaleValuation
                 }),
             })
             .then(response => response.json())
             .then(data => {
                 Plotly.newPlot('pie-chart', JSON.parse(data.pie_chart).data, JSON.parse(data.pie_chart).layout);
                 Plotly.newPlot('vesting-chart', JSON.parse(data.vesting_chart).data, JSON.parse(data.vesting_chart).layout);
+                
+                sessionStorage.setItem('fundRaisingData', JSON.stringify({
+                initialTotalSupply: initialTotalSupply,
+                publicSaleValuation: publicSaleValuation,
+                lpPoolAllocation: lpPoolAllocation,
+                lpPoolTokens: (lpPoolAllocation / 100) * initialTotalSupply
+            }));
             })
             .catch(error => {
                 console.error('Error generating charts:', error);
             });
-            sessionStorage.setItem('fundRaisingData', JSON.stringify({
-                initialTotalSupply: parseFloat(document.getElementById('initial-total-supply').value),
-                publicSaleValuation: parseFloat(document.getElementById('public-sale-valuation').value),
-                lpPoolAllocation: parseFloat(document.getElementById('lp-pool-allocation').value)
-            }));
-                
         }
         
         

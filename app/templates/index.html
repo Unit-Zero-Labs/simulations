@@ -186,6 +186,40 @@
         .table-container {
             max-width: 100%;
         }
+        .sticky {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background-color: var(--background);
+            padding: 10px 0;
+        }
+
+        .sub-tab-container {
+            display: flex;
+            justify-content: flex-start;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .sub-tab-button {
+            flex: 0 1 auto;
+            margin-right: 10px;
+        }
+
+        .sub-tab-content-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .sub-tab-content {
+            flex: 0 0 48%;  
+            display: none;
+        }
+
+        .sub-tab-content.active {
+            display: block;
+        }
     }
 
         
@@ -737,6 +771,17 @@
     </div>  
 
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeFundRaisingTab();
+            openTab({currentTarget: document.querySelector('.tab-button')}, 'simulations');
+
+            document.querySelector('.tab-button[onclick*="tokenomics"]').addEventListener('click', function() {
+                document.getElementById('fund-raising').classList.add('active');
+                document.getElementById('lp-sim').classList.remove('active');
+                document.querySelector('.sub-tab-button[onclick*="fund-raising"]').classList.add('active');
+                document.querySelector('.sub-tab-button[onclick*="lp-sim"]').classList.remove('active');
+            });
+        });
         const plotlyLayout = {
             paper_bgcolor: '#1A1A2E',
             plot_bgcolor: '#1A1A2E',
@@ -805,16 +850,10 @@
             for (i = 0; i < subtablinks.length; i++) {
                 subtablinks[i].className = subtablinks[i].className.replace(" active", "");
             }
-            document.getElementById(subTabName).style.display = "block";
-            if (evt) {
-                evt.currentTarget.className += " active";
-            } else {
-                var firstSubTabButton = document.querySelector(".sub-tab-button");
-                if (firstSubTabButton) {
-                    firstSubTabButton.className += " active";
-                }
-            }
+            document.getElementById(subTabName).classList.add("active");
+            evt.currentTarget.classList.add("active");
         }
+        
 
         function runLendingSimulation() {
             const data = {
@@ -1415,12 +1454,6 @@
             });
         }
         
-        
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeFundRaisingTab();
-            openTab({currentTarget: document.querySelector('.tab-button')}, 'simulations');
-        });
-
         function populateLPSimInputs() {
             const fundRaisingData = JSON.parse(sessionStorage.getItem('fundRaisingData'));
             if (fundRaisingData) {

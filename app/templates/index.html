@@ -771,17 +771,7 @@
     </div>  
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeFundRaisingTab();
-            openTab({currentTarget: document.querySelector('.tab-button')}, 'simulations');
-
-            document.querySelector('.tab-button[onclick*="tokenomics"]').addEventListener('click', function() {
-                document.getElementById('fund-raising').classList.add('active');
-                document.getElementById('lp-sim').classList.remove('active');
-                document.querySelector('.sub-tab-button[onclick*="fund-raising"]').classList.add('active');
-                document.querySelector('.sub-tab-button[onclick*="lp-sim"]').classList.remove('active');
-            });
-        });
+        
         const plotlyLayout = {
             paper_bgcolor: '#1A1A2E',
             plot_bgcolor: '#1A1A2E',
@@ -854,6 +844,17 @@
             evt.currentTarget.classList.add("active");
         }
         
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeFundRaisingTab();
+            openTab({currentTarget: document.querySelector('.tab-button')}, 'simulations');
+
+            document.querySelector('.tab-button[onclick*="tokenomics"]').addEventListener('click', function() {
+                document.getElementById('fund-raising').classList.add('active');
+                document.getElementById('lp-sim').classList.remove('active');
+                document.querySelector('.sub-tab-button[onclick*="fund-raising"]').classList.add('active');
+                document.querySelector('.sub-tab-button[onclick*="lp-sim"]').classList.remove('active');
+            });
+        });
 
         function runLendingSimulation() {
             const data = {

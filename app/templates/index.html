@@ -1410,6 +1410,10 @@
                 openSubTab(event, 'lp-sim');
                 populateLPSimInputs();
             });
+            document.querySelector('.sub-tab-button[onclick*="runway"]').addEventListener('click', function(event) {
+                openSubTab(event, 'runway');
+            
+            });
         });
 
         function generateFundRaisingCharts() {

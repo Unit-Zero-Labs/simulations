@@ -843,7 +843,7 @@
             for (i = 0; i < subtablinks.length; i++) {
                 subtablinks[i].className = subtablinks[i].className.replace(" active", "");
             }
-            document.getElementById(subTabName).style.display = "none";
+            document.getElementById(subTabName).style.display = "block";
             
             var activeSubTab = document.querySelector(`.sub-tab-button[onclick*="${subTabName}"]`);
             if (activeSubTab) {

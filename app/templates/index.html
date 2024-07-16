@@ -343,7 +343,7 @@
         <div class="sub-tab-container">
             <button class="sub-tab-button" onclick="openSubTab(event, 'fund-raising')">Fund Raising</button>
             <button class="sub-tab-button" onclick="openSubTab(event, 'lp-sim')">LP Sim</button>
-            <button class="sub-tab-button" onclick="openTab(event, 'runway')">Runway Sim</button>
+            <button class="sub-tab-button" onclick="openSubTab(event, 'runway')">Runway Sim</button>
         </div>
 
         <div id="fund-raising" class="sub-tab-content">
@@ -1284,6 +1284,7 @@
             advancedInputs.style.display = advancedInputs.style.display === 'none' ? 'block' : 'none';
         
         }
+
         const initialAllocationValues = {
             "Strategic": {percentage: 8, tgeUnlock: 0, cliff: 6, vestingPeriod: 9},
             "Seed": {percentage: 8.25, tgeUnlock: 0, cliff: 4, vestingPeriod: 9},
@@ -1392,6 +1393,7 @@
                 openTab(event, 'tokenomics');
                 
                 openSubTab(null, 'fund-raising');
+                // openSubTab(null, 'runway')
             });
 
             document.querySelectorAll('.sub-tab-button').forEach(button => {
@@ -1405,10 +1407,7 @@
                 openSubTab(event, 'lp-sim');
                 populateLPSimInputs();
             });
-            document.querySelector('.sub-tab-button[onclick*="runway"]').addEventListener('click', function(event) {
-                openSubTab(event, 'runway');
-            
-            });
+      
         });
 
         function generateFundRaisingCharts() {

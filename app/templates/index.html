@@ -1303,12 +1303,19 @@
 
         let initialTotalSupply = 0;
 
+        function getCurrentMonthString() {
+            const now = new Date();
+            return `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}`;
+        }
+
         function initializeFundRaisingTab() {
             document.getElementById('initial-total-supply').addEventListener('input', updateAllocationTable);
             
             const table = document.querySelector('#allocation-table tbody');
             table.innerHTML = ''; 
             
+            const currentDate = getCurrentMonthString();
+
             for (const [allocation, values] of Object.entries(initialAllocationValues)) {
                 const row = table.insertRow();
                 row.innerHTML = `
@@ -1322,13 +1329,21 @@
                     <td class="monthly-vesting-tokens"></td>
                     <td class="tokens-at-tge"></td>
                     <td><input type="number" class="discount" step="0.01"></td>
-                    <td><input type="month" class="vesting-start"></td>
+                    <td><input type="month" class="vesting-start" value="${currentDate}"></td>
                 `;
             }
 
             document.querySelectorAll('#allocation-table input').forEach(input => {
                 input.addEventListener('input', updateAllocationTable);
             });
+            document.querySelectorAll('#airdrop-module input').forEach(input => {
+                input.addEventListener('input', updateAirdropModule);
+            });
+
+            document.getElementById('airdrop2-date1').value = currentDate;
+            document.getElementById('airdrop2-date2').value = currentDate;
+            document.getElementById('airdrop2-date3').value = currentDate;
+            
             document.querySelectorAll('#airdrop-module input').forEach(input => {
                 input.addEventListener('input', updateAirdropModule);
             });
@@ -1393,7 +1408,7 @@
                 openTab(event, 'tokenomics');
                 
                 openSubTab(null, 'fund-raising');
-                // openSubTab(null, 'runway')
+                
             });
 
             document.querySelectorAll('.sub-tab-button').forEach(button => {
@@ -1407,6 +1422,8 @@
                 openSubTab(event, 'lp-sim');
                 populateLPSimInputs();
             });
+            document.querySelector('.sub-tab-button[onclick*="runway"]').addEventListener('click', function(event) {
+                openSubTab(event, 'runway');
       
         });
 

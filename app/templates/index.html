@@ -244,7 +244,7 @@
         <div class="tab-group">
             <button class="tab-button active" onclick="openTab(event, 'simulations')">DeFi Simulations</button>
             <button class="tab-button" onclick="openTab(event, 'tokenomics')">Tokenomics</button>
-            <button class="tab-button" onclick="openTab(event, 'runway')">Runway Sim</button>
+            
         </div>
         
         
@@ -343,6 +343,7 @@
         <div class="sub-tab-container">
             <button class="sub-tab-button" onclick="openSubTab(event, 'fund-raising')">Fund Raising</button>
             <button class="sub-tab-button" onclick="openSubTab(event, 'lp-sim')">LP Sim</button>
+            <button class="tab-button" onclick="openTab(event, 'runway')">Runway Sim</button>
         </div>
 
         <div id="fund-raising" class="sub-tab-content">
@@ -359,7 +360,7 @@
                 </div>
                 
 
-                <h3>Initial Token Allocation & Vesting Schedule</h3>
+                <h3>Token Allocation & Vesting Schedule</h3>
                 <div class="table-container">
                     
                     <table id="allocation-table">
@@ -648,7 +649,7 @@
             <button onclick="runLPSimulation()">Run LP Simulation</button>
             <div id="lp-sim-charts"></div>
         </div>
-        </div>
+        
 
     </div>
     <div id="runway" class="tab-content">
@@ -774,7 +775,7 @@
     </div>    
 
         
-        
+    </div>    
     </div>  
 
     <script>

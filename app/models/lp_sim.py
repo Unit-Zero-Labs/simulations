@@ -40,6 +40,7 @@ class LPSimulation:
         il = calculate_il(prices / self.token_launch_price)
         
         # apply token holder assumptions to adjust prices
+        # TO DO: apply LP pool token ratio toggle
         adoption_factor = 1 + (self.token_adoption_velocity * self.simulation_days / 365)
         utility_factor = 1 + self.avg_token_utility_allocation
         holding_factor = 1 + self.avg_token_holding

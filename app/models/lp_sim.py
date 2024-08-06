@@ -22,6 +22,7 @@ class LPSimulation:
         self.initial_lp_pairing_token2_amount = self.lp_pairing_token2_price * self.lp_pool_allocation
         
         # token holder Assumptions
+        # also fix holder assumptions
         self.token_adoption_velocity = token_adoption_velocity
         self.avg_token_utility_allocation = avg_token_utility_allocation / 100
         self.avg_token_holding = avg_token_holding / 100

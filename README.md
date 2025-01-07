@@ -1,4 +1,5 @@
-# UZ Simulation Lab
+![image](https://github.com/user-attachments/assets/d2052b74-9aa1-47a9-8a96-21168f235720)
+
 
 ## Simulations using Ornstein-Uhlenbeck & GBM
 
